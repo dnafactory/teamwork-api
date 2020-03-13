@@ -1,0 +1,23 @@
+{
+  "name": "dnafactory/teamwork-api",
+  "description": "PHP integration with Teamwork's API",
+  "version": "1.0.0",
+  "license": [
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "authors": [
+    {
+      "name": "Daniel Russo",
+      "email": "daniel@dnafactory.it",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "DNAFactory\\Teamwork\\": ""
+    }
+  }
+}

@@ -1,22 +1,28 @@
 <?php
 
-namespace App\TeamWork;
+namespace DNAFactory\Teamwork\Projects;
 
-// https://developer.teamwork.com/projects/clock-in-clock-out/get-all-clock-ins
+use DNAFactory\Teamwork\Proxy;
 
-class Clock extends Object
+/**
+ * Class Clock
+ *
+ * see https://developer.teamwork.com/projects/api-v1/ref/clock-in-clock-out/
+ * @package DNAFactory\Teamwork\Projects
+ */
+class Clock extends Proxy
 {
-    public function getAllClocks($personId, $params = array('page' => 1, 'pageSize' => 250))
+    public function getAllClocksIns($personId, $params = array('page' => 1, 'pageSize' => 250))
     {
         return $this->call("people/".$personId."/clockins.json", $params)->clockIns;
     }
 
-    public function clockIn()
+    public function clockMeIn()
     {
         return $this->call("/me/clockin.json", [], "POST");
     }
 
-    public function clockOut()
+    public function clockMeOut()
     {
         return $this->call("/me/clockout.json", [], "POST");
     }

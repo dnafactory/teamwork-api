@@ -1,17 +1,23 @@
 <?php
 
-namespace App\TeamWork;
+namespace DNAFactory\Teamwork\Projects;
 
-// https://developer.teamwork.com/projects/projects/retrieve-all-projects
+use DNAFactory\Teamwork\Proxy;
 
-class Projects extends Object
+/**
+ * Class Projects
+ *
+ * see https://developer.teamwork.com/projects/api-v1/ref/projects/get-projects-json
+ * @package DNAFactory\Teamwork\Projects
+ */
+class Projects extends Proxy
 {
     public function getAllProjects()
     {
         return $this->call("projects.json")->projects;
     }
 
-    public function getProject($projectId)
+    public function getSingleProject($projectId)
     {
         return $this->call("projects/".$projectId.".json")->project;
     }

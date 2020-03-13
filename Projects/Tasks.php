@@ -1,14 +1,25 @@
 <?php
 
-namespace App\TeamWork;
+namespace DNAFactory\Teamwork\Projects;
 
-// https://developer.teamwork.com/projects/tasks/get-all-tasks-across-all-projects
+use DNAFactory\Teamwork\Proxy;
 
-class Tasks extends Object
+/**
+ * Class Tasks
+ *
+ * see https://developer.teamwork.com/projects/api-v1/ref/tasks/get-tasks-json
+ * @package DNAFactory\Teamwork\Projects
+ */
+class Tasks extends Proxy
 {
     public function getAllTasks($params = array('page' => 1, 'pageSize' => 250, 'includeCompletedTasks' => true))
     {
         return $this->call("tasks.json", $params)->{'todo-items'};
+    }
+
+    public function getSingleTask($taskId)
+    {
+        return $this->call("tasks/".$taskId.".json")->{'todo-item'};
     }
 
     public function getAllTasksByProject($projectId, $params = array('page' => 1, 'pageSize' => 250, 'includeCompletedTasks' => true))
@@ -19,11 +30,6 @@ class Tasks extends Object
     public function getAllTasksByTaskList($taskListid, $params = array('page' => 1, 'pageSize' => 250, 'includeCompletedTasks' => true))
     {
         return $this->call("tasklists/".$taskListid."/tasks.json", $params)->{'todo-items'};
-    }
-
-    public function getTaskById($taskId)
-    {
-        return $this->call("tasks/".$taskId.".json")->{'todo-item'};
     }
 
     public function updateTask($taskId, $params = array())

@@ -1,23 +1,29 @@
 <?php
 
-namespace App\TeamWork;
+namespace DNAFactory\Teamwork\Projects;
 
-// https://developer.teamwork.com/projects/task-lists/get-all-task-lists
+use DNAFactory\Teamwork\Proxy;
 
-class TaskLists extends Object
+/**
+ * Class TaskLists
+ *
+ * see https://developer.teamwork.com/projects/api-v1/ref/task-lists/get-tasklists-json
+ * @package DNAFactory\Teamwork\Projects
+ */
+class TaskLists extends Proxy
 {
     public function getAllTaskLists($params = array('page' => 1, 'pageSize' => 250))
     {
         return $this->call("tasklists.json", $params)->tasklists;
     }
 
+    public function getSingleTaskList($taskListId)
+    {
+        return $this->call("tasklists/".$taskListId.".json")->{'todo-list'};
+    }
+
     public function getAllTaskListsByProject($projectId)
     {
         return $this->call("projects/".$projectId."/tasklists.json")->tasklists;
-    }
-
-    public function getTaskList($taskListId)
-    {
-        return $this->call("tasklists/".$taskListId.".json")->{'todo-list'};
     }
 }

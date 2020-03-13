@@ -10,7 +10,11 @@ if (file_exists("config.php")) {
 }
 
 
-$project = new \DNAFactory\Teamwork\Projects\Projects($baseUrl, $token);
+$project = new \DNAFactory\Teamwork\Projects\Clock($baseUrl, $token);
 
-var_dump($project->getAllProjects());
-var_dump($project->getSingleProject(1));
+var_dump($project->clockMeIn());
+var_dump($project->clockMeOut());
+
+$personId = 1;
+
+var_dump($project->getAllClocksIns($personId));

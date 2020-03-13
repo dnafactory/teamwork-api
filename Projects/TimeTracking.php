@@ -1,14 +1,25 @@
 <?php
 
-namespace App\TeamWork;
+namespace DNAFactory\Teamwork\Projects;
 
-// https://developer.teamwork.com/projects/time-tracking
+use DNAFactory\Teamwork\Proxy;
 
-class TimeTracking extends Object
+/**
+ * Class TimeTracking
+ *
+ * see https://developer.teamwork.com/projects/api-v1/ref/time-tracking/get-time-entries-json
+ * @package DNAFactory\Teamwork\Projects
+ */
+class TimeTracking extends Proxy
 {
     public function getAllTimes($params = array('page' => 1, 'pageSize' => 250))
     {
         return $this->call("time_entries.json", $params)->{'time-entries'};
+    }
+
+    public function getSingleTime($timeId, $params = array('page' => 1, 'pageSize' => 250))
+    {
+        return $this->call("time_entries/".$timeId.".json", $params)->{'time-entry'};
     }
 
     public function getAllTimesByProject($projectId, $params = array('page' => 1, 'pageSize' => 250))
@@ -47,10 +58,5 @@ class TimeTracking extends Object
     {
         $params['userId'] = $userId;
         return $this->getTotalTimeOnTask($taskId, $params);
-    }
-
-    public function getTime($timeId, $params = array('page' => 1, 'pageSize' => 250))
-    {
-        return $this->call("time_entries/".$timeId.".json", $params)->{'time-entry'};
     }
 }
