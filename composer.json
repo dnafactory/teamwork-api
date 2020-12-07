@@ -1,7 +1,6 @@
 {
   "name": "dnafactory/teamwork-api",
   "description": "PHP integration with Teamwork's API",
-  "version": "1.0.0",
   "license": [
   ],
   "require": {
