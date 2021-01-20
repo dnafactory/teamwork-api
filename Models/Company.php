@@ -25,12 +25,12 @@ class Company extends BaseModel
     protected function getCustomers(): array
     {
         $references = $this->getRawAttribute('customers', []);
-        return $this->getManyReferences($references);
+        return $this->retriveManyReferences($references);
     }
 
     protected function getDomains(): array
     {
         $references = $this->getRawAttribute('domains', []);
-        return $this->getManyReferences($references);
+        return $this->retriveManyReferences($references);
     }
 }

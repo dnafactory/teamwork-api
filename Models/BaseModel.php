@@ -38,7 +38,7 @@ abstract class BaseModel
         return $this->rawData[$name] ?? $default;
     }
 
-    protected function getManyReferences(array $references)
+    protected function retriveManyReferences(array $references)
     {
         $data = [];
         foreach ($references as $reference) {

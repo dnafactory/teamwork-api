@@ -30,6 +30,6 @@ class Inbox extends BaseModel
     protected function getUsers(): array
     {
         $references = $this->getRawAttribute('users', []);
-        return $this->getManyReferences($references);
+        return $this->retriveManyReferences($references);
     }
 }

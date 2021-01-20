@@ -21,6 +21,8 @@ namespace DNAFactory\Teamwork\Models;
  * @property-read User $agent
  * @property-read array $messages
  * @property-read array $timelogs
+ * @property-read array $mentions
+ * @property-read array $followers
  */
 class Ticket extends BaseModel
 {
@@ -65,12 +67,22 @@ class Ticket extends BaseModel
     protected function getMessages(): array
     {
         $references = $this->getRawAttribute('messages', []);
-        return $this->getManyReferences($references);
+        return $this->retriveManyReferences($references);
     }
 
     protected function getTimelogs(): array
     {
         $references = $this->getRawAttribute('timelogs', []);
-        return $this->getManyReferences($references);
+        return $this->retriveManyReferences($references);
+    }
+    protected function getMentions(): array
+    {
+        $references = $this->getRawAttribute('mentions', []);
+        return $this->retriveManyReferences($references);
+    }
+    protected function getFollowers(): array
+    {
+        $references = $this->getRawAttribute('followers', []);
+        return $this->retriveManyReferences($references);
     }
 }
