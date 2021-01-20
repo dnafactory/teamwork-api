@@ -23,10 +23,10 @@ abstract class BaseModel
     public function __get($name)
     {
         $getter = 'get' . ucfirst($name);
-        if (in_array($getter, get_class_methods($getter))) {
+        if (in_array($getter, get_class_methods($this))) {
             return $this->$getter();
         }
-        return $this->rawData[$name] ?? null;
+        return $this->getRawAttribute($name);
     }
 
     public function getRawAttribute($name, $default = null)
