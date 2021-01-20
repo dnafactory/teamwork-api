@@ -1,0 +1,22 @@
+{
+    "name": "dnafactory/teamwork-api",
+    "description": "PHP integration with Teamwork's API.",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.2",
+        "nesbot/carbon": "^2.43",
+        "ext-json": "*"
+    },
+    "authors": [
+        {
+            "name": "Domenico Ragusa",
+            "email": "domenico.ragusa@dnafactory.it"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DNAFactory\\Teamwork\\" : ""
+        }
+    }
+}
