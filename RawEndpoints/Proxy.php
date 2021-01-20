@@ -51,7 +51,7 @@ class Proxy
         return json_decode($data->getBody(), true);
     }
 
-    protected function jsonCall(string $endpoint, array $params = [], $method = 'GET', $encoding = self::ENCODING_QUERY)
+    protected function queryCall(string $endpoint, array $params = [], $method = 'GET', $encoding = self::ENCODING_QUERY)
     {
         $rawData = $this->rawCall($endpoint, $params, $method, $encoding);
         parse_str($rawData->getBody(), $data);

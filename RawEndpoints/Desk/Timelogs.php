@@ -2,7 +2,7 @@
 
 namespace DNAFactory\Teamwork\RawEndpoints\Desk;
 
-use DNAFactory\Teamwork\Support\Proxy;
+use DNAFactory\Teamwork\RawEndpoints\Proxy;
 
 class Timelogs extends Proxy
 {

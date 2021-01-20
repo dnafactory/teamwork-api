@@ -8,7 +8,7 @@ use DNAFactory\Teamwork\Models\BaseModel;
 
 class Router
 {
-    protected $endpoints;
+    protected array $endpoints;
 
     public function __construct()
     {
@@ -21,7 +21,7 @@ class Router
      */
     public function registerEndpoint(BaseEndpoint $endpoint)
     {
-        $type = $endpoint::TYPE_NAME;
+        $type = $endpoint::REF_TYPE_NAME;
         if (isset($this->endpoints[$type])) {
             throw new EndpointAlreadyRegisteredException();
         }
