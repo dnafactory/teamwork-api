@@ -97,7 +97,7 @@ abstract class BaseEndpoint
             if (!isset($id)) {
                 continue;
             }
-            yield $id => $this->makeOne($id);
+            yield $id => $this->getById($id);
         }
     }
 
@@ -107,12 +107,13 @@ abstract class BaseEndpoint
         $unlimited = is_null($limit);
         $method = 'getAll';
         $n = 0;
+        $hasMore = true;
         while ($hasMore && ($unlimited || $n < $limit)) {
-            echo "\$rawResponse = \$this->executeRawSingleRequest($method, $params);\n";
+            $rawResponse = $this->executeRawSingleRequest($method, $params);
             $rawEntries = $this->extractData($method, $rawResponse ?? []);
             $this->loadRawEntries($rawEntries);
             if ($skip > $n) {
-                $rawEntries = array_slice($rawEntries, $skip - $n);
+                $rawEntries = array_slice($rawEntries, $skip - $n, $limit);
             }
             yield from $rawEntries;
             $n += count($rawEntries);
@@ -122,7 +123,7 @@ abstract class BaseEndpoint
         }
     }
 
-    public function executeRawSingleRequest(string $method, array $params)
+    protected function executeRawSingleRequest(string $method, array $params)
     {
         /** @var array $rawResponse */
         $rawResponse = $this->rawEndpoint->$method(...$params);
@@ -134,7 +135,7 @@ abstract class BaseEndpoint
     {
         $included = $rawData['included'] ?? [];
         foreach ($included as $type => $entries) {
-            echo "loading ".count($entries)." $type\n";
+            echo "loading " . count($entries) . " $type\n";
             $this->router->loadEntries($type, $entries);
         }
     }
@@ -166,10 +167,10 @@ abstract class BaseEndpoint
 
         $this->makeRequest()
             ->filterBy(['id', 'in', $missing])
-            ->toArray();
+            ->getArray();
     }
 
-    public function requestParams(array $request)
+    protected function requestParams(array $request)
     {
         $skip = $request['startAt'] ?? 0;
         $limit = $request['endAt'] ?? null;
@@ -180,16 +181,17 @@ abstract class BaseEndpoint
         if (isset($request['filter'])) {
             $params['filter'] = json_encode($request['filter']);
         }
-        return [$skip, $limit, $params];
+        return [$skip, $limit, [$params]];
     }
 
-    public function nextPage(array $rawResponse, array $params): ?array
+    protected function nextPage(array $rawResponse, array $params): ?array
     {
         $hasMore = $rawResponse['meta']['page']['hasMore'] ?? false;
         if (!$hasMore) {
             return null;
         }
-        $params['page'] += 1;
+        $page = $params['page'] ?? 1;
+        $params['page'] = $page + 1;
         return $params;
     }
 
