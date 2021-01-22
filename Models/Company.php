@@ -4,6 +4,11 @@ namespace DNAFactory\Teamwork\Models;
 
 /**
  * @property-read int $id
+ * @property-read string $state
+ * @property-read \Carbon\Carbon $createdAt
+ * @property-read Customer|User $createdBy
+ * @property-read \Carbon\Carbon $updatedAt
+ * @property-read Customer|User $updatedBy
  * @property-read string $name
  * @property-read string $email
  * @property-read string $details
@@ -14,11 +19,6 @@ namespace DNAFactory\Teamwork\Models;
  * @property-read string $kind
  * @property-read array $customers
  * @property-read array $domains
- * @property-read string $state
- * @property-read \Carbon\Carbon $createdAt
- * @property-read Customer|User $createdBy
- * @property-read \Carbon\Carbon $updatedAt
- * @property-read Customer|User $updatedBy
  */
 class Company extends BaseModel
 {

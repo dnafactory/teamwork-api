@@ -6,17 +6,17 @@ use Carbon\Carbon;
 
 /**
  * @property-read int $id
+ * @property-read string $state
+ * @property-read \Carbon\Carbon $createdAt
+ * @property-read Customer|User $createdBy
+ * @property-read \Carbon\Carbon $updatedAt
+ * @property-read Customer|User $updatedBy
  * @property-read bool $billable
  * @property-read Carbon $date
  * @property-read int $seconds
  * @property-read int $timezoneOffset
  * @property-read Ticket $ticket
  * @property-read User $user
- * @property-read string $state
- * @property-read \Carbon\Carbon $createdAt
- * @property-read Customer|User $createdBy
- * @property-read \Carbon\Carbon $updatedAt
- * @property-read Customer|User $updatedBy
  */
 class Timelog extends BaseModel
 {

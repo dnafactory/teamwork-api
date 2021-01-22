@@ -7,7 +7,7 @@ use DNAFactory\Teamwork\Endpoints\BaseEndpoint;
 
 abstract class BaseModel
 {
-    private BaseEndpoint $endpoint;
+    protected BaseEndpoint $endpoint;
     protected $id;
     protected array $rawData;
     protected bool $loaded;
@@ -72,7 +72,7 @@ abstract class BaseModel
 
     protected function getUpdatedBy(): ?BaseModel
     {
-        $value = $this->getRawAttribute('updatedBy');
+        $reference = $this->getRawAttribute('updatedBy');
         return $this->endpoint->retriveReference($reference);
     }
 

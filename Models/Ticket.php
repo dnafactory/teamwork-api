@@ -4,6 +4,11 @@ namespace DNAFactory\Teamwork\Models;
 
 /**
  * @property-read int $id
+ * @property-read string $state
+ * @property-read \Carbon\Carbon $createdAt
+ * @property-read Customer|User $createdBy
+ * @property-read \Carbon\Carbon $updatedAt
+ * @property-read Customer|User $updatedBy
  * @property-read string $subject
  * @property-read string $previewText
  * @property-read string $originalRecipient
@@ -11,11 +16,6 @@ namespace DNAFactory\Teamwork\Models;
  * @property-read ?int $resolutionTimeMins
  * @property-read bool $imagesHidden
  * @property-read bool $isRead
- * @property-read string $state
- * @property-read \Carbon\Carbon $createdAt
- * @property-read Customer|User $createdBy
- * @property-read \Carbon\Carbon $updatedAt
- * @property-read Customer|User $updatedBy
  * @property-read Customer $customer
  * @property-read Inbox $inbox
  * @property-read User $agent

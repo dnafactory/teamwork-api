@@ -17,6 +17,7 @@ namespace DNAFactory\Teamwork\Models;
  * @property-read string $address
  * @property-read string $avatarURL
  * @property-read bool $trusted
+ * @property-read Company $company
  * @property-read array $contacts
  * @property-read string $state
  * @property-read \Carbon\Carbon $createdAt
@@ -33,4 +34,9 @@ class Customer extends BaseModel
         return $this->getManyReferences($references);
     }
     */
+    protected function getCompany(): ?Company
+    {
+        $reference = $this->getRawAttribute('company');
+        return $this->endpoint->retriveReference($reference);
+    }
 }

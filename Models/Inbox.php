@@ -4,18 +4,17 @@ namespace DNAFactory\Teamwork\Models;
 
 /**
  * @property-read int $id
- * @property-read string $name
- * @property-read int $displayOrder
- * @property-read string $email
- * @property-read string $iconImage
- * @property-read string $email
- * @property-read string $forwardingAddress
- * @property-read array $users
  * @property-read string $state
  * @property-read \Carbon\Carbon $createdAt
  * @property-read Customer|User $createdBy
  * @property-read \Carbon\Carbon $updatedAt
  * @property-read Customer|User $updatedBy
+ * @property-read string $name
+ * @property-read int $displayOrder
+ * @property-read string $email
+ * @property-read string $iconImage
+ * @property-read string $forwardingAddress
+ * @property-read array $users
  */
 
 class Inbox extends BaseModel
