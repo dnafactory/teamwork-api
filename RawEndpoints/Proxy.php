@@ -28,21 +28,24 @@ class Proxy
     public function setHeader(string $name, string $value)
     {
         $this->headers[$name] = $value;
+        return $this;
     }
 
     public function setBaseUrl(string $baseUrl)
     {
         $this->baseUrl = $baseUrl;
+        return $this;
     }
 
     public function setToken(string $token)
     {
-        $this->setHeader('Authorization', 'Bearer ' . $token);
+        return $this->setHeader('Authorization', 'Bearer ' . $token);
     }
 
     public function setWaitMargin(int $waitMargin)
     {
         $this->waitMargin = $waitMargin;
+        return $this;
     }
 
     protected function jsonCall(string $endpoint, array $params = [], $method = 'GET', $encoding = self::ENCODING_QUERY)
@@ -74,7 +77,7 @@ class Proxy
             $this->updateLimits($request);
             return $request;
         } catch (GuzzleException $e) {
-            throw new ConnectionException();
+            throw new ConnectionException($e->getMessage());
         }
     }
 
