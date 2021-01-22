@@ -64,14 +64,17 @@ abstract class BaseEndpoint
     }
 
     /**
-     * @param array $reference
-     * @return BaseModel|mixed
+     * @param array|null $reference
+     * @return BaseModel|null
      * @throws InvalidReferenceException
      * @throws \DNAFactory\Teamwork\Exceptions\EndpointNotRegisteredException
      */
-    public function retriveReference(array $reference)
+    public function retriveReference(?array $reference): ?BaseModel
     {
         $type = $reference['type'] ?? null;
+        if (is_null($type)) {
+            return null;
+        }
         if ($type == static::REF_TYPE_NAME) {
             return $this->getByReference($reference);
         }
