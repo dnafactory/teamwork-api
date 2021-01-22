@@ -17,7 +17,12 @@ class RequestBuilder
         $this->endpoint = $endpoint;
     }
 
-    public function toArray(): array
+    public function getArray(): array
+    {
+        return iterator_to_array($this->getResults());
+    }
+
+    public function getResults(): \Generator
     {
         $request = $this->prepareRequest();
         return $this->endpoint->executeRequest($request);
