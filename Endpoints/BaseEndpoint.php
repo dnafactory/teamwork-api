@@ -112,15 +112,21 @@ abstract class BaseEndpoint
         $unlimited = is_null($limit);
         $method = 'getAll';
         $n = 0;
+        $pageSize = 50;
         $hasMore = true;
         while ($hasMore && ($unlimited || $n < $limit)) {
             $rawResponse = $this->executeRawSingleRequest($method, $params);
             $rawEntries = $this->extractData($method, $rawResponse ?? []);
             $this->loadRawEntries($rawEntries);
-            if ($skip > $n) {
-                $rawEntries = array_slice($rawEntries, $skip - $n, $limit);
+            $cutStart = max($skip - $n, 0);
+            $cutEnd = min($limit - $n, $pageSize);
+            if ($cutStart != 0 || $cutEnd != $pageSize) {
+                $rawResponse = array_slice($rawResponse, $cutStart, $cutEnd);
             }
-            yield from $rawEntries;
+            //yield from $rawEntries;
+            foreach ($rawEntries as $entry) {
+                yield $entry;
+            }
             $n += count($rawEntries);
 
             $params = $this->nextPage($rawResponse, $params);
