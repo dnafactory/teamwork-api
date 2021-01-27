@@ -22,8 +22,7 @@ class Timelog extends BaseModel
 {
     protected function getDate(): ?Carbon
     {
-        $value = $this->getRawAttribute('date');
-        return is_null($value) ? null : Carbon::parse($value);
+        return $this->convertDate($this->getRawAttribute('date'));
     }
 
     protected function getTicket(): ?BaseModel

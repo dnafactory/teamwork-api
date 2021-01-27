@@ -79,11 +79,15 @@ abstract class BaseModel
         return $data;
     }
 
+    protected function convertDate(string $date): ?Carbon
+    {
+        return is_null($date) ? null : Carbon::parse($date);
+    }
+
     // common getters
     protected function getCreatedAt(): ?Carbon
     {
-        $value = $this->getRawAttribute('createdAt');
-        return is_null($value) ? null : Carbon::parse($value);
+        return $this->convertDate($this->getRawAttribute('createdAt'));
     }
 
     protected function getCreatedBy(): ?BaseModel
@@ -94,8 +98,7 @@ abstract class BaseModel
 
     protected function getUpdatedAt(): ?Carbon
     {
-        $value = $this->getRawAttribute('updatedAt');
-        return is_null($value) ? null : Carbon::parse($value);
+        return $this->convertDate($this->getRawAttribute('updatedAt'));
     }
 
     protected function getUpdatedBy(): ?BaseModel
