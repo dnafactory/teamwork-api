@@ -11,6 +11,7 @@ abstract class BaseModel
     protected $id;
     protected array $rawData;
     protected bool $loaded;
+    protected array $customFields;
 
     public function __construct(BaseEndpoint $endpoint, $id, array $rawData = [], bool $loaded = false)
     {
@@ -18,10 +19,14 @@ abstract class BaseModel
         $this->id = $id;
         $this->rawData = $rawData;
         $this->loaded = $loaded;
+        $this->customFields = [];
     }
 
     public function __get($name)
     {
+        if(isset($this->customFields[$name])){
+            return $this->extractCustomField($name);
+        }
         $getter = 'get' . ucfirst($name);
         if (in_array($getter, get_class_methods($this))) {
             return $this->$getter();
@@ -36,6 +41,29 @@ abstract class BaseModel
             $this->loaded = true;
         }
         return $this->rawData[$name] ?? $default;
+    }
+
+    protected function extractRawCustomField(int $id, $default = null): ?string
+    {
+        $rawCustomfields = $this->getRawAttribute('customfields');
+        foreach ($rawCustomfields as $rawCustomfield) {
+            if (!isset($rawCustomfield['meta']) || $rawCustomfield['id'] != $id) {
+                continue;
+            }
+            return $rawCustomfield['meta'] ?? $default;
+        }
+        return $default;
+    }
+
+    public function extractCustomField(string $name, $default = null)
+    {
+        $id = $this->customFields[$name] ?? null;
+        if (!isset($id)) {
+            return $default;
+        }
+        $rawValue = $this->extractRawCustomField($id);
+        $definition = $this->endpoint->retriveReference(['id' => $id, 'type' => 'customfields']);
+        return $definition->convert($rawValue);
     }
 
     protected function retriveManyReferences(array $references)
