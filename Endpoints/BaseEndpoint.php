@@ -48,6 +48,11 @@ abstract class BaseEndpoint
         return new RequestBuilder($this);
     }
 
+    public function fetchAll()
+    {
+        return $this->makeRequest()->getResults();
+    }
+
     public function allCached(): \Generator
     {
         foreach (array_keys($this->cache) as $id) {
