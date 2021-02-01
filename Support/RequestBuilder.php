@@ -11,6 +11,7 @@ class RequestBuilder
     protected int $limit;
     protected int $skip;
     protected array $filter;
+    protected array $params;
 
     public function __construct(BaseEndpoint $endpoint)
     {
@@ -46,14 +47,19 @@ class RequestBuilder
         return $this;
     }
 
+    public function setParams(array $params): RequestBuilder
+    {
+        $this->params = $params;
+        return $this;
+    }
+
     public function preload(array $relationships): RequestBuilder
     {
         $this->relationships = $relationships;
         return $this;
     }
 
-
-    protected function prepareRequest(): array
+    public function prepareRequest(): array
     {
         $request = [];
         if (isset($this->relationships)) {
@@ -68,6 +74,10 @@ class RequestBuilder
         if (isset($this->limit)) {
             $request['endAt'] = $this->skip + $this->limit;
         }
+        if (isset($this->params)) {
+            $request['params'] = $this->params;
+        }
+
         return $request;
     }
 }
