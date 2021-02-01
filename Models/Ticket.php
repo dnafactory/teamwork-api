@@ -45,30 +45,30 @@ class Ticket extends BaseModel
     }
 
     /*
-        protected function getContact(): ?BaseModel
-        {
-            $reference = $this->getRawAttribute('contact');
-            return $this->endpoint->retriveReference($reference);
-        }
+    protected function getContact(): ?BaseModel
+    {
+        $reference = $this->getRawAttribute('contact');
+        return $this->endpoint->retriveReference($reference);
+    }
 
-        protected function getType(): ?BaseModel
-        {
-            $reference = $this->getRawAttribute('type');
-            return $this->endpoint->retriveReference($reference);
-        }
+    protected function getType(): ?BaseModel
+    {
+        $reference = $this->getRawAttribute('type');
+        return $this->endpoint->retriveReference($reference);
+    }
 
-        protected function getStatus(): ?BaseModel
-        {
-            $reference = $this->getRawAttribute('status');
-            return $this->endpoint->retriveReference($reference);
-        }
-    */
+    protected function getStatus(): ?BaseModel
+    {
+        $reference = $this->getRawAttribute('status');
+        return $this->endpoint->retriveReference($reference);
+    }
 
     protected function getMessages(): array
     {
         $references = $this->getRawAttribute('messages', []);
         return $this->retriveManyReferences($references);
     }
+    */
 
     protected function getTimelogs(): array
     {
