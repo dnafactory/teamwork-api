@@ -10,11 +10,11 @@ use DNAFactory\Teamwork\Support\RequestBuilder;
 
 abstract class BaseEndpoint
 {
+    // string that identifies the type when other endpoints reference an entry
     const REF_TYPE_NAME = null;
-    const ARRAY_PATH_FOR_ENTRIES = [
-        'getById' => null,
-        'getAll' => null
-    ];
+
+    // array key containing the results for current endpoint
+    const ARRAY_KEY_FOR_ENTRIES = null;
 
     protected Router $router;
     protected Proxy $rawEndpoint;
@@ -43,8 +43,9 @@ abstract class BaseEndpoint
         return $this->instancesById[$id];
     }
 
-    public function makeRequest()
+    public function makeRequest(): RequestBuilder
     {
+        // use a factory
         return new RequestBuilder($this);
     }
 
@@ -110,13 +111,12 @@ abstract class BaseEndpoint
     {
         [$skip, $limit, $params] = $this->requestParams($request);
         $unlimited = is_null($limit);
-        $method = 'getAll';
         $n = 0;
         $pageSize = 50;
         $hasMore = true;
         while ($hasMore && ($unlimited || $n < $limit)) {
-            $rawResponse = $this->executeRawSingleRequest($method, $params);
-            $rawEntries = $this->extractData($method, $rawResponse ?? []);
+            $rawResponse = $this->executeRawSingleRequest($params);
+            $rawEntries = $this->extractData($rawResponse ?? []);
             $this->loadRawEntries($rawEntries);
             $cutStart = max($skip - $n, 0);
             $cutEnd = min($limit - $n, $pageSize);
@@ -134,10 +134,10 @@ abstract class BaseEndpoint
         }
     }
 
-    protected function executeRawSingleRequest(string $method, array $params)
+    protected function executeRawSingleRequest(array $params)
     {
         /** @var array $rawResponse */
-        $rawResponse = $this->rawEndpoint->$method(...$params);
+        $rawResponse = $this->rawEndpoint->getAll($params);
         $this->extractIncluded($rawResponse);
         return $rawResponse;
     }
@@ -151,9 +151,9 @@ abstract class BaseEndpoint
         }
     }
 
-    protected function extractData(string $method, array $rawData)
+    protected function extractData(array $rawData)
     {
-        $path = static::ARRAY_PATH_FOR_ENTRIES[$method] ?? null;
+        $path = static::ARRAY_KEY_FOR_ENTRIES ?? null;
         $entries = $rawData[$path] ?? null;
         if (!isset($path, $entries)) {
             throw new NoDataExtractedException();
@@ -170,29 +170,12 @@ abstract class BaseEndpoint
         return $this->getById($id);
     }
 
-    public function preload(?array $ids)
-    {
-        $wanted = $ids ?? array_keys($this->instancesById);
-        $cached = array_keys($this->cache);
-        $missing = array_diff($wanted, $cached);
-
-        $this->makeRequest()
-            ->filterBy(['id', 'in', $missing])
-            ->getArray();
-    }
-
     protected function requestParams(array $request)
     {
         $skip = $request['startAt'] ?? 0;
         $limit = $request['endAt'] ?? null;
         $params = ['page' => (int)floor($skip / $this->pageSize) + 1];
-        if (isset($request['relationships'])) {
-            $params['includes'] = implode(',', $request['relationships']);
-        }
-        if (isset($request['filter'])) {
-            $params['filter'] = json_encode($request['filter']);
-        }
-        return [$skip, $limit, [$params]];
+        return [$skip, $limit, $params];
     }
 
     protected function nextPage(array $rawResponse, array $params): ?array
@@ -206,5 +189,8 @@ abstract class BaseEndpoint
         return $params;
     }
 
+    // use a factory
     protected abstract function makeOne(int $id): BaseModel;
+
+    public abstract function preload(?array $ids);
 }
