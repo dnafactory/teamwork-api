@@ -8,11 +8,13 @@ class Timelogs extends BaseRawEndpoint
 {
     public function getMany(array $params = [])
     {
-        return $this->call('/v3/time.json', $params);
+        $rawResponse = $this->call('/v3/time.json', $params);
+        return $this->extractData($rawResponse, 'timelogs');
     }
 
     public function getManyByProjectId(int $id, array $params = [])
     {
-        return $this->call("v3/projects/$id/time.json", $params);
+        $rawResponse = $this->call("v3/projects/$id/time.json", $params);
+        return $this->extractData($rawResponse, 'timelogs');
     }
 }

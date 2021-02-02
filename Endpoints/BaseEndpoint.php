@@ -12,10 +12,7 @@ abstract class BaseEndpoint
 {
     // string that identifies the type when other endpoints reference an entry
     const REF_TYPE_NAME = null;
-
-    // array key containing the results for current endpoint
-    const ARRAY_KEY_FOR_ENTRIES = null;
-
+    
     protected Router $router;
     protected BaseRawEndpoint $rawEndpoint;
     protected array $cache = [];
@@ -116,50 +113,31 @@ abstract class BaseEndpoint
         $pageSize = 50;
         $hasMore = true;
         while ($hasMore && ($unlimited || $n < $limit)) {
-            $rawResponse = $this->executeRawSingleRequest($params);
-            $rawEntries = $this->extractData($rawResponse ?? []);
-            $this->loadRawEntries($rawEntries);
+            [$entries, $included, $page] = $this->rawEndpoint->getMany($params);
+            $this->loadIncluded($included);
+            $this->loadRawEntries($entries);
             $cutStart = max($skip - $n, 0);
             $cutEnd = min($limit - $n, $pageSize);
             if ($cutStart != 0 || $cutEnd != $pageSize) {
-                $rawResponse = array_slice($rawResponse, $cutStart, $cutEnd);
+                $entries = array_slice($entries, $cutStart, $cutEnd);
             }
-            //yield from $rawEntries;
-            foreach ($rawEntries as $entry) {
+            //yield from $entries;
+            foreach ($entries as $entry) {
                 yield $entry;
             }
-            $n += count($rawEntries);
+            $n += count($entries);
 
-            $params = $this->nextPage($rawResponse, $params);
+            $params = $this->nextPage($page, $params);
             $hasMore = !is_null($params);
         }
     }
 
-    protected function executeRawSingleRequest(array $params)
-    {
-        /** @var array $rawResponse */
-        $rawResponse = $this->rawEndpoint->getMany($params);
-        $this->extractIncluded($rawResponse);
-        return $rawResponse;
-    }
-
-    protected function extractIncluded(array $rawData)
+    protected function loadIncluded(array $rawData)
     {
         $included = $rawData['included'] ?? [];
         foreach ($included as $type => $entries) {
-            echo "loading " . count($entries) . " $type\n";
             $this->router->loadEntries($type, $entries);
         }
-    }
-
-    protected function extractData(array $rawData)
-    {
-        $path = static::ARRAY_KEY_FOR_ENTRIES ?? null;
-        $entries = $rawData[$path] ?? null;
-        if (!isset($path, $entries)) {
-            throw new NoDataExtractedException();
-        }
-        return $entries;
     }
 
     protected function requestParams(array $request)
@@ -170,9 +148,9 @@ abstract class BaseEndpoint
         return [$skip, $limit, $params];
     }
 
-    protected function nextPage(array $rawResponse, array $params): ?array
+    protected function nextPage(array $pagination, array $params): ?array
     {
-        $hasMore = $rawResponse['meta']['page']['hasMore'] ?? false;
+        $hasMore = $pagination['hasMore'] ?? false;
         if (!$hasMore) {
             return null;
         }

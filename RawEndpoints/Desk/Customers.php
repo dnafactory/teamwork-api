@@ -8,11 +8,13 @@ class Customers extends BaseRawEndpoint
 {
     public function getById(int $id, array $params = [])
     {
-        return $this->call("/v2/customers/{$id}.json", $params);
+        $rawResponse = $this->call("/v2/customers/{$id}.json", $params);
+        return $this->extractData($rawResponse, 'customer');
     }
 
     public function getMany(array $params = [])
     {
-        return $this->call('/v2/customers.json', $params);
+        $rawResponse = $this->call("/v2/customers/{$id}.json", $params);
+        return $this->extractData($rawResponse, 'customers');
     }
 }

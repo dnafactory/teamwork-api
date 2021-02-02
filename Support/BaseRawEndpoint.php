@@ -94,9 +94,12 @@ abstract class BaseRawEndpoint
         $this->limitTimestamp = (int)$request->getHeader('X-Rate-Limit-Reset');
     }
 
-    protected function extractData(array $rawData, string $resultPath, string $includedPath, string $metaPath)
+    protected function extractData(array $rawRequest, string $entriesKey)
     {
-
+        $rawData = $rawRequest[$entriesKey];
+        $included = $rawRequest['included'];
+        $page = array_get_by_path($rawRequest, 'meta.page');
+        return [$rawData, $included, $page];
     }
 
     public abstract function getMany(array $params);
