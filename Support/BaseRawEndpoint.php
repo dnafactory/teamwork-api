@@ -1,24 +1,21 @@
 <?php
 
-namespace DNAFactory\Teamwork\RawEndpoints;
+namespace DNAFactory\Teamwork\Support;
 
 use DNAFactory\Teamwork\Exceptions\ConnectionException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 
-class Proxy
+abstract class BaseRawEndpoint
 {
-    const ENCODING_QUERY = 'query';
-    const ENCODING_FORM_URLENCODE = 'form-urlencode';
-    const ENCODING_JSON = 'json';
-
     protected HttpClient $httpClient;
     protected array $headers = [];
     protected string $baseUrl;
     protected int $limitTimestamp = 0;
     protected int $limitRemaining = 1;
     protected int $waitMargin = 1;
+    protected int $maximumTries = 5;
 
     public function __construct(HttpClient $httpClient)
     {
@@ -48,31 +45,33 @@ class Proxy
         return $this;
     }
 
-    protected function jsonCall(string $endpoint, array $params = [], $method = 'GET', $encoding = self::ENCODING_QUERY)
+    public function setMaximumTries(int $maximumTries)
     {
-        $data = $this->rawCall($endpoint, $params, $method, $encoding);
-        return json_decode($data->getBody(), true);
+        $this->maximumTries = $maximumTries;
+        return $this;
     }
 
-    protected function queryCall(string $endpoint, array $params = [], $method = 'GET', $encoding = self::ENCODING_QUERY)
+    protected function call(string $endpoint, array $params = [], $method = 'GET')
     {
-        $rawData = $this->rawCall($endpoint, $params, $method, $encoding);
-        parse_str($rawData->getBody(), $data);
-        return $data;
-    }
-
-    protected function rawCall(string $endpoint, array $params, string $method, $encoding)
-    {
-        $httpParams = ['headers' => $this->headers];
-        if ($encoding == self::ENCODING_JSON) {
-            $httpParams['body'] = json_encode($params);
-        } elseif ($encoding == self::ENCODING_FORM_URLENCODE) {
-            $httpParams['body'] = http_build_query($params);
-        } elseif ($encoding == self::ENCODING_QUERY) {
-            $httpParams['query'] = http_build_query($params);
+        for ($i = 0; $i < $this->maximumTries; $i++) {
+            $request = $this->rawCall($endpoint, $params, $method);
+            if ($request->getStatusCode() != 429) { // 429 too many requests
+                return json_decode($request->getBody(), true);
+            }
         }
+        throw new ConnectionException("Call to endpoint $endpoint failed after {$i} attempts.");
+    }
+
+    protected function rawCall(string $endpoint, array $params, string $method)
+    {
+        $httpParams = [
+            'headers' => $this->headers,
+            'query' => http_build_query($params)
+        ];
+
         $uri = $this->baseUrl . $endpoint;
         try {
+            $this->waitIfNecessary();
             $request = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
             $this->updateLimits($request);
             return $request;
@@ -94,4 +93,11 @@ class Proxy
         $this->limitRemaining = (int)$request->getHeader('X-Rate-Limit-Remaining');
         $this->limitTimestamp = (int)$request->getHeader('X-Rate-Limit-Reset');
     }
+
+    protected function extractData(array $rawData, string $resultPath, string $includedPath, string $metaPath)
+    {
+
+    }
+
+    public abstract function getMany(array $params);
 }

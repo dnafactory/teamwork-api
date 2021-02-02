@@ -5,7 +5,7 @@ namespace DNAFactory\Teamwork\Endpoints;
 use DNAFactory\Teamwork\Exceptions\InvalidReferenceException;
 use DNAFactory\Teamwork\Exceptions\NoDataExtractedException;
 use DNAFactory\Teamwork\Models\BaseModel;
-use DNAFactory\Teamwork\RawEndpoints\Proxy;
+use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 use DNAFactory\Teamwork\Support\RequestBuilder;
 
 abstract class BaseEndpoint
@@ -17,18 +17,18 @@ abstract class BaseEndpoint
     const ARRAY_KEY_FOR_ENTRIES = null;
 
     protected Router $router;
-    protected Proxy $rawEndpoint;
+    protected BaseRawEndpoint $rawEndpoint;
     protected array $cache = [];
     protected array $instancesById = [];
     protected int $pageSize = 50;
 
     /**
      * BaseEndpoint constructor.
-     * @param Proxy $rawEndpoint
+     * @param BaseRawEndpoint $rawEndpoint
      * @param Router $router
      * @throws \DNAFactory\Teamwork\Exceptions\EndpointAlreadyRegisteredException
      */
-    public function __construct(Proxy $rawEndpoint, Router $router)
+    public function __construct(BaseRawEndpoint $rawEndpoint, Router $router)
     {
         $this->rawEndpoint = $rawEndpoint;
         $this->router = $router;
@@ -137,7 +137,7 @@ abstract class BaseEndpoint
     protected function executeRawSingleRequest(array $params)
     {
         /** @var array $rawResponse */
-        $rawResponse = $this->rawEndpoint->getAll($params);
+        $rawResponse = $this->rawEndpoint->getMany($params);
         $this->extractIncluded($rawResponse);
         return $rawResponse;
     }

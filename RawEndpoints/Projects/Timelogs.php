@@ -2,17 +2,17 @@
 
 namespace DNAFactory\Teamwork\RawEndpoints\Projects;
 
-use DNAFactory\Teamwork\RawEndpoints\Proxy;
+use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 
-class Timelogs extends Proxy
+class Timelogs extends BaseRawEndpoint
 {
-    public function getAll(array $params = [])
+    public function getMany(array $params = [])
     {
-        return $this->jsonCall('/v3/time.json', $params);
+        return $this->call('/v3/time.json', $params);
     }
 
-    public function getAllByProjectId(int $id, array $params = [])
+    public function getManyByProjectId(int $id, array $params = [])
     {
-        return $this->jsonCall("v3/projects/$id/time.json", $params);
+        return $this->call("v3/projects/$id/time.json", $params);
     }
 }

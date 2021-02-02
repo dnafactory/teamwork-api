@@ -2,17 +2,17 @@
 
 namespace DNAFactory\Teamwork\RawEndpoints\Desk;
 
-use DNAFactory\Teamwork\RawEndpoints\Proxy;
+use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 
-class Tickets extends Proxy
+class Tickets extends BaseRawEndpoint
 {
     public function getById(int $id, array $params = [])
     {
-        return $this->jsonCall("/v2/tickets/{$id}.json", $params);
+        return $this->call("/v2/tickets/{$id}.json", $params);
     }
 
-    public function getAll(array $params = [])
+    public function getMany(array $params = [])
     {
-        return $this->jsonCall('/v2/tickets.json', $params);
+        return $this->call('/v2/tickets.json', $params);
     }
 }
