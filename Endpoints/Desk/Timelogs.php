@@ -5,7 +5,7 @@ namespace DNAFactory\Teamwork\Endpoints\Desk;
 use Carbon\Carbon;
 use DNAFactory\Teamwork\Endpoints\Router;
 use DNAFactory\Teamwork\Models\Timelog;
-use DNAFactory\Teamwork\RawEndpoints\Desk\Inboxes as RawTimelogs;
+use DNAFactory\Teamwork\RawEndpoints\Desk\Timelogs as RawTimelogs;
 use DNAFactory\Teamwork\Support\RequestBuilder;
 
 class Timelogs extends DeskEndpoint
