@@ -78,11 +78,12 @@ abstract class BaseEndpoint
     public function retriveReference(?array $reference): ?BaseModel
     {
         $type = $reference['type'] ?? null;
-        if (is_null($type)) {
+        $id = $reference['id'] ?? null;
+        if (is_null($type) || is_null($id)) {
             return null;
         }
         if ($type == static::REF_TYPE_NAME) {
-            return $this->getByReference($reference);
+            return $this->getById($id);
         }
         return $this->router->retriveReference($reference);
     }
@@ -161,15 +162,6 @@ abstract class BaseEndpoint
         return $entries;
     }
 
-    protected function getByReference($reference)
-    {
-        $id = $reference['id'] ?? null;
-        if (!isset($id)) {
-            throw new InvalidReferenceException();
-        }
-        return $this->getById($id);
-    }
-
     protected function requestParams(array $request)
     {
         $skip = $request['startAt'] ?? 0;
@@ -192,5 +184,5 @@ abstract class BaseEndpoint
     // use a factory
     protected abstract function makeOne(int $id): BaseModel;
 
-    public abstract function preload(?array $ids);
+    public abstract function preload(array $ids = []);
 }
