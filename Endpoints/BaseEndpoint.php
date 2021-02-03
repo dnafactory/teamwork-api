@@ -116,8 +116,8 @@ abstract class BaseEndpoint
             [$entries, $included, $page] = $this->rawEndpoint->getMany($params);
             $this->loadIncluded($included);
             $this->loadRawEntries($entries);
-            $cutStart = max($skip - $n, 0);
-            $cutEnd = min($limit - $n, $pageSize);
+            $cutStart = $n > 0 ?  0 : $skip;
+            $cutEnd = $unlimited ? $pageSize : $limit - $n;
             if ($cutStart != 0 || $cutEnd != $pageSize) {
                 $entries = array_slice($entries, $cutStart, $cutEnd);
             }
@@ -145,6 +145,7 @@ abstract class BaseEndpoint
         $skip = $request['startAt'] ?? 0;
         $limit = $request['endAt'] ?? null;
         $params = ['page' => (int)floor($skip / $this->pageSize) + 1];
+        $skip %= $this->pageSize;
         return [$skip, $limit, $params];
     }
 
