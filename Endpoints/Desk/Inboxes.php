@@ -9,7 +9,6 @@ use DNAFactory\Teamwork\RawEndpoints\Desk\Inboxes as RawInboxes;
 class Inboxes extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'inboxes';
-    const ARRAY_KEY_FOR_ENTRIES = 'inboxes';
 
     public function __construct(RawInboxes $rawEndpoint, Router $router)
     {

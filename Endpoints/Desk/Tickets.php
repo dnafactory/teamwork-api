@@ -9,7 +9,6 @@ use DNAFactory\Teamwork\RawEndpoints\Desk\Tickets as RawTickets;
 class Tickets extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'tickets';
-    const ARRAY_KEY_FOR_ENTRIES = 'tickets';
 
     public function __construct(RawTickets $rawEndpoint, Router $router)
     {

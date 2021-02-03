@@ -9,7 +9,6 @@ use DNAFactory\Teamwork\RawEndpoints\Desk\Companies as RawCompanies;
 class Companies extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'companies';
-    const ARRAY_KEY_FOR_ENTRIES = 'companies';
 
     public function __construct(RawCompanies $rawEndpoint, Router $router)
     {
