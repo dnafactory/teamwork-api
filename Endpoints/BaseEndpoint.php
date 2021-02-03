@@ -85,10 +85,10 @@ abstract class BaseEndpoint
         return $this->router->retriveReference($reference);
     }
 
-    public function getRawById($id)
+    public function getRawById(int $id)
     {
         if (!isset($this->cache[$id])) {
-            $this->preload([$id]);
+            $this->preload($id);
         }
         return $this->cache[$id];
     }
@@ -163,5 +163,5 @@ abstract class BaseEndpoint
     // use a factory
     protected abstract function makeOne(int $id): BaseModel;
 
-    public abstract function preload(array $ids = []);
+    protected abstract function preload(int $id);
 }

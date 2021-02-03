@@ -18,12 +18,13 @@ abstract class DeskEndpoint extends BaseEndpoint
         return [$skip, $limit, $params];
     }
 
-    public function preload(array $ids = [])
+    protected function preload(int $id)
     {
-        $wanted = $ids ?? array_keys($this->instancesById);
-        //$wanted = array_slice(array_unique(array_merge($ids, array_keys($this->instancesById))), 0, $this->pageSize);
+        $instanced = array_keys($this->instancesById);
+        $wanted = array_unique([$id, ...$instanced]);
         $cached = array_keys($this->cache);
         $missing = array_diff($wanted, $cached);
+        $missing = array_splice($missing, 0, $this->pageSize);
 
         $this->makeRequest()
             ->filterBy(['id' => ['$in' => $missing]])
