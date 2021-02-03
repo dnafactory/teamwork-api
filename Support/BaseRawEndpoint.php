@@ -82,7 +82,7 @@ abstract class BaseRawEndpoint
 
     protected function waitIfNecessary()
     {
-        if ($this->limitTimestamp < time() || $this->limitRemaining > 0) {
+        if ($this->limitTimestamp < time() || $this->limitRemaining > 1) {
             return;
         }
         time_sleep_until($this->limitTimestamp);
@@ -90,8 +90,8 @@ abstract class BaseRawEndpoint
 
     protected function updateLimits(ResponseInterface $request)
     {
-        $this->limitRemaining = (int)$request->getHeader('X-Rate-Limit-Remaining');
-        $this->limitTimestamp = (int)$request->getHeader('X-Rate-Limit-Reset');
+        $this->limitRemaining = (int)$request->getHeader('X-Rate-Limit-Remaining')[0];
+        $this->limitTimestamp = (int)$request->getHeader('X-Rate-Limit-Reset')[0]+time();
     }
 
     protected function extractData(array $rawRequest, string $entriesKey)
