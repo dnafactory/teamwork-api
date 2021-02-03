@@ -3,7 +3,6 @@
 namespace DNAFactory\Teamwork\Endpoints;
 
 use DNAFactory\Teamwork\Exceptions\InvalidReferenceException;
-use DNAFactory\Teamwork\Exceptions\NoDataExtractedException;
 use DNAFactory\Teamwork\Models\BaseModel;
 use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 use DNAFactory\Teamwork\Support\RequestBuilder;
@@ -49,13 +48,6 @@ abstract class BaseEndpoint
     public function fetchAll()
     {
         return $this->makeRequest()->getResults();
-    }
-
-    public function allCached(): \Generator
-    {
-        foreach (array_keys($this->cache) as $id) {
-            yield $id => $this->getById($id);
-        }
     }
 
     public function loadRawEntries(array $entries)
@@ -144,7 +136,7 @@ abstract class BaseEndpoint
     {
         $skip = $request['startAt'] ?? 0;
         $limit = $request['endAt'] ?? null;
-        $params = ['page' => (int)floor($skip / $this->pageSize) + 1];
+        $params = ['page' => intdiv($skip, $this->pageSize) + 1];
         $skip %= $this->pageSize;
         return [$skip, $limit, $params];
     }
