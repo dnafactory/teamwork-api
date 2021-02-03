@@ -54,9 +54,9 @@ abstract class BaseRawEndpoint
     protected function call(string $endpoint, array $params = [], $method = 'GET')
     {
         for ($i = 0; $i < $this->maximumTries; $i++) {
-            $request = $this->rawCall($endpoint, $params, $method);
-            if ($request->getStatusCode() != 429) { // 429 too many requests
-                return json_decode($request->getBody(), true);
+            $response = $this->rawCall($endpoint, $params, $method);
+            if ($response->getStatusCode() != 429) { // 429 too many requests
+                return json_decode($response->getBody(), true);
             }
         }
         throw new ConnectionException("Call to endpoint $endpoint failed after {$i} attempts.");
@@ -72,9 +72,9 @@ abstract class BaseRawEndpoint
         $uri = $this->baseUrl . $endpoint;
         try {
             $this->waitIfNecessary();
-            $request = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
-            $this->updateLimits($request);
-            return $request;
+            $response = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
+            $this->updateLimits($response);
+            return $response;
         } catch (GuzzleException $e) {
             throw new ConnectionException($e->getMessage());
         }
@@ -88,17 +88,17 @@ abstract class BaseRawEndpoint
         time_sleep_until($this->limitTimestamp);
     }
 
-    protected function updateLimits(ResponseInterface $request)
+    protected function updateLimits(ResponseInterface $response)
     {
-        $this->limitRemaining = (int)$request->getHeader('X-Rate-Limit-Remaining')[0];
-        $this->limitTimestamp = (int)$request->getHeader('X-Rate-Limit-Reset')[0]+time();
+        $this->limitRemaining = (int)$response->getHeader('X-Rate-Limit-Remaining')[0];
+        $this->limitTimestamp = (int)$response->getHeader('X-Rate-Limit-Reset')[0]+time();
     }
 
-    protected function extractData(array $rawRequest, string $entriesKey)
+    protected function extractData(array $rawResponse, string $keyForData)
     {
-        $rawData = $rawRequest[$entriesKey];
-        $included = $rawRequest['included'];
-        $page = array_get_by_path($rawRequest, 'meta.page');
+        $rawData = $rawResponse[$keyForData] ?? [];
+        $included = $rawResponse['included'] ?? [];
+        $page = $rawResponse['meta']['page'] ?? [];
         return [$rawData, $included, $page];
     }
 
