@@ -5,6 +5,7 @@ namespace DNAFactory\Teamwork\Support;
 use DNAFactory\Teamwork\Exceptions\ConnectionException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class BaseRawEndpoint
@@ -53,11 +54,16 @@ abstract class BaseRawEndpoint
 
     protected function call(string $endpoint, array $params = [], $method = 'GET')
     {
-        for ($i = 0; $i < $this->maximumTries; $i++) {
-            $response = $this->rawCall($endpoint, $params, $method);
-            if ($response->getStatusCode() != 429) { // 429 too many requests
-                return json_decode($response->getBody(), true);
+        for ($i = 0; $i < $this->maximumTries+150; $i++) {
+            try {
+                $response = $this->rawCall($endpoint, $params, $method);
+            } catch (RequestException $e) {
+                if ($e->hasResponse()) {
+                    $this->updateLimits($e->getResponse());
+                }
+                continue;
             }
+            return json_decode($response->getBody(), true);
         }
         throw new ConnectionException("Call to endpoint $endpoint failed after {$i} attempts.");
     }
@@ -68,21 +74,17 @@ abstract class BaseRawEndpoint
             'headers' => $this->headers,
             'query' => http_build_query($params)
         ];
-
         $uri = $this->baseUrl . $endpoint;
-        try {
-            $this->waitIfNecessary();
-            $response = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
-            $this->updateLimits($response);
-            return $response;
-        } catch (GuzzleException $e) {
-            throw new ConnectionException($e->getMessage());
-        }
+
+        $this->waitIfNecessary();
+        $response = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
+        $this->updateLimits($response);
+        return $response;
     }
 
     protected function waitIfNecessary()
     {
-        if ($this->limitTimestamp < time() || $this->limitRemaining > 1) {
+        if ($this->limitTimestamp < time() || $this->limitRemaining > 0) {
             return;
         }
         time_sleep_until($this->limitTimestamp);
