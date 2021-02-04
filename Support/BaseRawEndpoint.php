@@ -23,7 +23,7 @@ abstract class BaseRawEndpoint
         $this->httpClient = $httpClient;
     }
 
-    public function setHeader(string $name, string $value)
+    public function setHeader(string $name, $value)
     {
         $this->headers[$name] = $value;
         return $this;

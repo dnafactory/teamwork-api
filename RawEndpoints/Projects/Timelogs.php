@@ -12,6 +12,11 @@ class Timelogs extends BaseRawEndpoint
         return $this->extractData($rawResponse, 'timelogs');
     }
 
+    public function setToken(string $token)
+    {
+        return $this->setHeader('auth', [$token, 'X']);
+    }
+
     public function getManyByProjectId(int $id, array $params = [])
     {
         $rawResponse = $this->call("v3/projects/$id/time.json", $params);
