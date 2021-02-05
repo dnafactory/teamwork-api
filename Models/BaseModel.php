@@ -43,7 +43,7 @@ abstract class BaseModel
         return $this->rawData[$name] ?? $default;
     }
 
-    protected function extractRawCustomField(int $id, $default = null): ?string
+    public function extractRawCustomField(int $id, $default = null): ?array
     {
         $rawCustomfields = $this->getRawAttribute('customfields');
         foreach ($rawCustomfields as $rawCustomfield) {
@@ -79,7 +79,7 @@ abstract class BaseModel
         return $data;
     }
 
-    protected function convertDate(string $date): ?Carbon
+    protected function convertDate(?string $date): ?Carbon
     {
         return is_null($date) ? null : Carbon::parse($date);
     }
