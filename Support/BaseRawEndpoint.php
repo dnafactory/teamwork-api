@@ -13,8 +13,7 @@ abstract class BaseRawEndpoint
     protected HttpClient $httpClient;
     protected array $headers = [];
     protected string $baseUrl;
-    protected int $limitTimestamp = 0;
-    protected int $limitRemaining = 1;
+    protected int $defaultWait = 60;
     protected int $waitMargin = 1;
     protected int $maximumTries = 5;
 
@@ -35,18 +34,19 @@ abstract class BaseRawEndpoint
         return $this;
     }
 
-    public function setToken(string $token)
-    {
-        return $this->setHeader('Authorization', 'Bearer ' . $token);
-    }
-
-    public function setWaitMargin(int $waitMargin)
+    public function setWaitMargin(int $waitMargin): BaseRawEndpoint
     {
         $this->waitMargin = $waitMargin;
         return $this;
     }
 
-    public function setMaximumTries(int $maximumTries)
+    public function setDefaultWait(int $defaultWait): BaseRawEndpoint
+    {
+        $this->defaultWait = $defaultWait;
+        return $this;
+    }
+
+    public function setMaximumTries(int $maximumTries): BaseRawEndpoint
     {
         $this->maximumTries = $maximumTries;
         return $this;
@@ -54,13 +54,12 @@ abstract class BaseRawEndpoint
 
     protected function call(string $endpoint, array $params = [], $method = 'GET')
     {
-        for ($i = 0; $i < $this->maximumTries+150; $i++) {
+        for ($i = 0; $i < $this->maximumTries; $i++) {
             try {
                 $response = $this->rawCall($endpoint, $params, $method);
             } catch (RequestException $e) {
-                if ($e->hasResponse()) {
-                    $this->updateLimits($e->getResponse());
-                }
+                $response = $e->hasResponse() ? $e->getResponse() : null;
+                $this->waitRateLimit($response);
                 continue;
             }
             return json_decode($response->getBody(), true);
@@ -76,24 +75,18 @@ abstract class BaseRawEndpoint
         ];
         $uri = $this->baseUrl . $endpoint;
 
-        $this->waitIfNecessary();
         $response = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
-        $this->updateLimits($response);
         return $response;
     }
 
-    protected function waitIfNecessary()
+    protected function waitRateLimit(?ResponseInterface $response)
     {
-        if ($this->limitTimestamp < time() || $this->limitRemaining > 0) {
-            return;
+        $wait = null;
+        if (!is_null($response)) {
+            $wait = $response->getHeader('X-Rate-Limit-Reset');
         }
-        time_sleep_until($this->limitTimestamp);
-    }
-
-    protected function updateLimits(ResponseInterface $response)
-    {
-        $this->limitRemaining = (int)$response->getHeader('X-Rate-Limit-Remaining')[0];
-        $this->limitTimestamp = (int)$response->getHeader('X-Rate-Limit-Reset')[0]+time();
+        $wait = $wait ? (int)$wait[0] : $this->defaultWait;
+        time_sleep_until(time() + $wait + $this->waitMargin);
     }
 
     protected function extractData(array $rawResponse, string $keyForData)
@@ -105,4 +98,6 @@ abstract class BaseRawEndpoint
     }
 
     public abstract function getMany(array $params);
+
+    public abstract function setToken(string $token): BaseRawEndpoint;
 }

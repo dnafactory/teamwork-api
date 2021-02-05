@@ -2,9 +2,7 @@
 
 namespace DNAFactory\Teamwork\RawEndpoints\Desk;
 
-use DNAFactory\Teamwork\Support\BaseRawEndpoint;
-
-class Customers extends BaseRawEndpoint
+class Customers extends DeskRawEndpoint
 {
     public function getById(int $id, array $params = [])
     {
