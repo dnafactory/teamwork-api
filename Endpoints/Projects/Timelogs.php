@@ -22,8 +22,8 @@ class Timelogs extends ProjectsEndpoint
     {
         return $this->makeRequest()
             ->filterBy([
-                'startDate' => $startDate,
-                'endDate' => $endDate
+                'startDate' => $startDate->format('Y-m-d'),
+                'endDate' => $endDate->format('Y-m-d')
             ]);
     }
 
