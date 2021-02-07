@@ -15,4 +15,9 @@ class Tickets extends DeskRawEndpoint
         $rawResponse = $this->call('/v2/tickets.json', $params);
         return $this->extractData($rawResponse, 'tickets');
     }
+
+    public function putById(int $id, array $payload)
+    {
+        return $this->call("/../v1/tickets/$id.json", $payload, 'PUT', self::ENCODING_JSON);
+    }
 }

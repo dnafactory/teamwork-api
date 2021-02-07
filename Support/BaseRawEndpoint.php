@@ -10,6 +10,10 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class BaseRawEndpoint
 {
+    const ENCODING_QUERY = 'query';
+    const ENCODING_FORM_URLENCODE = 'form-urlencode';
+    const ENCODING_JSON = 'json';
+
     protected HttpClient $httpClient;
     protected array $httpParams = [];
     protected string $baseUrl;
@@ -52,12 +56,13 @@ abstract class BaseRawEndpoint
         return $this;
     }
 
-    protected function call(string $endpoint, array $params = [], $method = 'GET')
+    protected function call(string $endpoint, array $params = [], $method = 'GET', $encoding = self::ENCODING_QUERY)
     {
-        for ($i = 0; $i < $this->maximumTries; $i++) {
+        for ($i = 0; $i < $this->maximumTries + 150; $i++) {
             try {
-                $response = $this->rawCall($endpoint, $params, $method);
+                $response = $this->rawCall($endpoint, $params, $method, $encoding);
             } catch (RequestException $e) {
+                echo $e->getMessage();
                 $response = $e->hasResponse() ? $e->getResponse() : null;
                 $this->waitRateLimit($response);
                 continue;
@@ -67,9 +72,17 @@ abstract class BaseRawEndpoint
         throw new ConnectionException("Call to endpoint $endpoint failed after {$i} attempts.");
     }
 
-    protected function rawCall(string $endpoint, array $params, string $method)
+    protected function rawCall(string $endpoint, array $params, string $method, string $encoding)
     {
         $httpParams = $this->httpParams;
+        if ($encoding == self::ENCODING_JSON) {
+            $httpParams['body'] = json_encode($params);
+            $httpParams['headers']['Content-type'] = 'application/json';
+        } elseif ($encoding == self::ENCODING_FORM_URLENCODE) {
+            $httpParams['body'] = http_build_query($params);
+        } elseif ($encoding == self::ENCODING_QUERY) {
+            $httpParams['query'] = http_build_query($params);
+        }
 
         $uri = $this->baseUrl . $endpoint;
         $response = $this->httpClient->request($method, $uri, $httpParams);
