@@ -2,9 +2,7 @@
 
 namespace DNAFactory\Teamwork\RawEndpoints\Desk;
 
-use DNAFactory\Teamwork\Support\BaseRawEndpoint;
-
-class CustomFields extends BaseRawEndpoint
+class CustomFields extends DeskRawEndpoint
 {
     public function getById(int $id, array $params = [])
     {
