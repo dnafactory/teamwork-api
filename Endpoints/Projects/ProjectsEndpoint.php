@@ -11,6 +11,7 @@ abstract class ProjectsEndpoint extends BaseEndpoint
     {
         [$skip, $limit, $params] = parent::requestParams($request);
         if (isset($request['relationships'])) {
+            // NOTE: this is not a typo, desk uses includeS while projects use include
             $params['include'] = implode(',', $request['relationships']);
         }
         if (isset($request['filter'])) {

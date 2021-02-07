@@ -11,7 +11,7 @@ abstract class BaseEndpoint
 {
     // string that identifies the type when other endpoints reference an entry
     const REF_TYPE_NAME = null;
-    
+
     protected Router $router;
     protected BaseRawEndpoint $rawEndpoint;
     protected array $cache = [];
@@ -97,7 +97,7 @@ abstract class BaseEndpoint
         }
     }
 
-    public function executeRawRequest(array $request)
+    protected function executeRawRequest(array $request)
     {
         [$skip, $limit, $params] = $this->requestParams($request);
         $unlimited = is_null($limit);
@@ -136,7 +136,8 @@ abstract class BaseEndpoint
     {
         $skip = $request['startAt'] ?? 0;
         $limit = $request['endAt'] ?? null;
-        $params = ['page' => intdiv($skip, $this->pageSize) + 1];
+        $params = $request['params'] ?? [];
+        $params['page'] = intdiv($skip, $this->pageSize) + 1;
         $skip %= $this->pageSize;
         return [$skip, $limit, $params];
     }

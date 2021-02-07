@@ -47,12 +47,6 @@ class RequestBuilder
         return $this;
     }
 
-    public function setParams(array $params): RequestBuilder
-    {
-        $this->params = $params;
-        return $this;
-    }
-
     public function preload(array $relationships): RequestBuilder
     {
         $this->relationships = $relationships;
@@ -73,9 +67,6 @@ class RequestBuilder
         }
         if (isset($this->limit)) {
             $request['endAt'] = $this->limit;
-        }
-        if (isset($this->params)) {
-            $request['params'] = $this->params;
         }
 
         return $request;
