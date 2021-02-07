@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 abstract class BaseRawEndpoint
 {
     protected HttpClient $httpClient;
-    protected array $headers = [];
+    protected array $httpParams = [];
     protected string $baseUrl;
     protected int $defaultWait = 60;
     protected int $waitMargin = 1;
@@ -24,7 +24,7 @@ abstract class BaseRawEndpoint
 
     public function setHeader(string $name, $value)
     {
-        $this->headers[$name] = $value;
+        $this->httpParams['headers'][$name] = $value;
         return $this;
     }
 
@@ -69,13 +69,10 @@ abstract class BaseRawEndpoint
 
     protected function rawCall(string $endpoint, array $params, string $method)
     {
-        $httpParams = [
-            'headers' => $this->headers,
-            'query' => http_build_query($params)
-        ];
-        $uri = $this->baseUrl . $endpoint;
+        $httpParams = $this->httpParams;
 
-        $response = $this->httpClient->request($method ?? 'GET', $uri, $httpParams);
+        $uri = $this->baseUrl . $endpoint;
+        $response = $this->httpClient->request($method, $uri, $httpParams);
         return $response;
     }
 

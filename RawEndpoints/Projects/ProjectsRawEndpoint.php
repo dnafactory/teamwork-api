@@ -8,6 +8,7 @@ abstract class ProjectsRawEndpoint extends BaseRawEndpoint
 {
     public function setToken(string $token): BaseRawEndpoint
     {
-        return $this->setHeader('auth', [$token, 'X']);
+        $this->httpParams['auth'] = [$token, 'whatever'];
+        return $this;
     }
 }
