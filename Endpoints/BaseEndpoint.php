@@ -31,6 +31,18 @@ abstract class BaseEndpoint
         $this->router->registerEndpoint($this);
     }
 
+    public function setPageSize(int $pageSize): BaseEndpoint
+    {
+        $this->pageSize = $pageSize;
+        return $this;
+    }
+
+    public function flushCache(): BaseEndpoint
+    {
+        $this->cache = [];
+        return $this;
+    }
+
     public function getById(int $id)
     {
         if (!isset($this->instancesById[$id])) {
