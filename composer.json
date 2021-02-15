@@ -16,7 +16,10 @@
     ],
     "autoload": {
         "psr-4": {
-            "DNAFactory\\Teamwork\\" : ""
-        }
+            "DNAFactory\\Teamwork\\": ""
+        },
+        "files": [
+            "Support/helpers.php"
+        ]
     }
 }

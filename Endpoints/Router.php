@@ -57,7 +57,7 @@ class Router
      * @return mixed
      * @throws EndpointNotRegisteredException
      */
-    public function getEndpointByType(string $type)
+    public function getEndpointByType(string $type): ?BaseEndpoint
     {
         $endpoint = $this->endpoints[$type] ?? null;
         if (!isset($endpoint)) {

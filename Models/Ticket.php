@@ -2,6 +2,8 @@
 
 namespace DNAFactory\Teamwork\Models;
 
+use Carbon\Carbon;
+
 /**
  * @property-read int $id
  * @property-read string $state
@@ -23,6 +25,7 @@ namespace DNAFactory\Teamwork\Models;
  * @property-read array $timelogs
  * @property-read array $mentions
  * @property-read array $followers
+ * @property-read \Carbon\Carbon $expiration
  */
 class Ticket extends BaseModel
 {
@@ -44,42 +47,51 @@ class Ticket extends BaseModel
         return $this->endpoint->retriveReference($reference);
     }
 
+    protected function getExpiration(): ?Carbon
+    {
+        $rawValue = $this->extractRawCustomField(63, []);
+        $rawValue = $rawValue['textValue'][0] ?? null;
+        return $this->convertDate($rawValue ?: null);
+    }
+
     /*
-        protected function getContact(): ?BaseModel
-        {
-            $reference = $this->getRawAttribute('contact');
-            return $this->endpoint->retriveReference($reference);
-        }
+    protected function getContact(): ?BaseModel
+    {
+        $reference = $this->getRawAttribute('contact');
+        return $this->endpoint->retriveReference($reference);
+    }
 
-        protected function getType(): ?BaseModel
-        {
-            $reference = $this->getRawAttribute('type');
-            return $this->endpoint->retriveReference($reference);
-        }
+    protected function getType(): ?BaseModel
+    {
+        $reference = $this->getRawAttribute('type');
+        return $this->endpoint->retriveReference($reference);
+    }
 
-        protected function getStatus(): ?BaseModel
-        {
-            $reference = $this->getRawAttribute('status');
-            return $this->endpoint->retriveReference($reference);
-        }
-    */
+    protected function getStatus(): ?BaseModel
+    {
+        $reference = $this->getRawAttribute('status');
+        return $this->endpoint->retriveReference($reference);
+    }
 
     protected function getMessages(): array
     {
         $references = $this->getRawAttribute('messages', []);
         return $this->retriveManyReferences($references);
     }
+    */
 
     protected function getTimelogs(): array
     {
         $references = $this->getRawAttribute('timelogs', []);
         return $this->retriveManyReferences($references);
     }
+
     protected function getMentions(): array
     {
         $references = $this->getRawAttribute('mentions', []);
         return $this->retriveManyReferences($references);
     }
+
     protected function getFollowers(): array
     {
         $references = $this->getRawAttribute('followers', []);

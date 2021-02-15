@@ -1,18 +1,18 @@
-<?phpcustomers
+<?php
 
 namespace DNAFactory\Teamwork\RawEndpoints\Desk;
 
-use DNAFactory\Teamwork\RawEndpoints\Proxy;
-
-class Inboxes extends Proxy
+class Inboxes extends DeskRawEndpoint
 {
     public function getById(int $id, array $params = [])
     {
-        return $this->jsonCall("/v2/inboxes/{$id}.json", $params);
+        $rawResponse = $this->call("/v2/inboxes/{$id}.json", $params);
+        return $this->extractData($rawResponse, 'inbox');
     }
 
-    public function getAll(array $params = [])
+    public function getMany(array $params = [])
     {
-        return $this->jsonCall('/v2/inboxes.json', $params);
+        $rawResponse = $this->call('/v2/inboxes.json', $params);
+        return $this->extractData($rawResponse, 'inboxes');
     }
 }

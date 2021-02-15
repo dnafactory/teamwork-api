@@ -21,7 +21,7 @@ class WebhookAdapter
         $adaptedTicket = [
             'id' => $ticketId,
             'subject' => $rawTicket['subject'],
-            'followers' => $rawTicket['followers'],
+            'followers' => $rawTicket['followers'] ?? [],
             'state' => $rawTicket['state'],
             'createdAt' => $rawTicket['createdAt'],
             'updatedAt' => $rawTicket['updatedAt'],

@@ -2,18 +2,14 @@
 
 namespace DNAFactory\Teamwork\Endpoints\Desk;
 
-use DNAFactory\Teamwork\Endpoints\BaseEndpoint;
 use DNAFactory\Teamwork\Endpoints\Router;
 use DNAFactory\Teamwork\Models\User;
 use DNAFactory\Teamwork\RawEndpoints\Desk\Users as RawUsers;
 
-class Users extends BaseEndpoint
+class Users extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'users';
-    const ARRAY_PATH_FOR_ENTRIES = [
-        'getById' => 'user',
-        'getAll' => 'users'
-    ];
+    const ARRAY_KEY_FOR_ENTRIES = 'users';
 
     public function __construct(RawUsers $rawEndpoint, Router $router)
     {

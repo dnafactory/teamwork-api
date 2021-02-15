@@ -3,36 +3,44 @@
 namespace DNAFactory\Teamwork\Endpoints;
 
 use DNAFactory\Teamwork\Exceptions\InvalidReferenceException;
-use DNAFactory\Teamwork\Exceptions\NoDataExtractedException;
 use DNAFactory\Teamwork\Models\BaseModel;
-use DNAFactory\Teamwork\RawEndpoints\Proxy;
+use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 use DNAFactory\Teamwork\Support\RequestBuilder;
 
 abstract class BaseEndpoint
 {
+    // string that identifies the type when other endpoints reference an entry
     const REF_TYPE_NAME = null;
-    const ARRAY_PATH_FOR_ENTRIES = [
-        'getById' => null,
-        'getAll' => null
-    ];
 
     protected Router $router;
-    protected Proxy $rawEndpoint;
+    protected BaseRawEndpoint $rawEndpoint;
     protected array $cache = [];
     protected array $instancesById = [];
     protected int $pageSize = 50;
 
     /**
      * BaseEndpoint constructor.
-     * @param Proxy $rawEndpoint
+     * @param BaseRawEndpoint $rawEndpoint
      * @param Router $router
      * @throws \DNAFactory\Teamwork\Exceptions\EndpointAlreadyRegisteredException
      */
-    public function __construct(Proxy $rawEndpoint, Router $router)
+    public function __construct(BaseRawEndpoint $rawEndpoint, Router $router)
     {
         $this->rawEndpoint = $rawEndpoint;
         $this->router = $router;
         $this->router->registerEndpoint($this);
+    }
+
+    public function setPageSize(int $pageSize): BaseEndpoint
+    {
+        $this->pageSize = $pageSize;
+        return $this;
+    }
+
+    public function flushCache(): BaseEndpoint
+    {
+        $this->cache = [];
+        return $this;
     }
 
     public function getById(int $id)
@@ -43,21 +51,15 @@ abstract class BaseEndpoint
         return $this->instancesById[$id];
     }
 
-    public function makeRequest()
+    public function makeRequest(): RequestBuilder
     {
+        // use a factory
         return new RequestBuilder($this);
     }
 
     public function fetchAll()
     {
         return $this->makeRequest()->getResults();
-    }
-
-    public function allCached(): \Generator
-    {
-        foreach (array_keys($this->cache) as $id) {
-            yield $id => $this->getById($id);
-        }
     }
 
     public function loadRawEntries(array $entries)
@@ -77,19 +79,20 @@ abstract class BaseEndpoint
     public function retriveReference(?array $reference): ?BaseModel
     {
         $type = $reference['type'] ?? null;
-        if (is_null($type)) {
+        $id = $reference['id'] ?? null;
+        if (is_null($type) || is_null($id)) {
             return null;
         }
         if ($type == static::REF_TYPE_NAME) {
-            return $this->getByReference($reference);
+            return $this->getById($id);
         }
         return $this->router->retriveReference($reference);
     }
 
-    public function getRawById($id)
+    public function getRawById(int $id)
     {
         if (!isset($this->cache[$id])) {
-            $this->preload([$id]);
+            $this->preload($id);
         }
         return $this->cache[$id];
     }
@@ -106,98 +109,54 @@ abstract class BaseEndpoint
         }
     }
 
-    public function executeRawRequest(array $request)
+    protected function executeRawRequest(array $request)
     {
         [$skip, $limit, $params] = $this->requestParams($request);
         $unlimited = is_null($limit);
-        $method = 'getAll';
         $n = 0;
         $pageSize = 50;
         $hasMore = true;
         while ($hasMore && ($unlimited || $n < $limit)) {
-            $rawResponse = $this->executeRawSingleRequest($method, $params);
-            $rawEntries = $this->extractData($method, $rawResponse ?? []);
-            $this->loadRawEntries($rawEntries);
-            $cutStart = max($skip - $n, 0);
-            $cutEnd = min($limit - $n, $pageSize);
+            [$entries, $included, $page] = $this->rawEndpoint->getMany($params);
+            $this->loadIncluded($included);
+            $this->loadRawEntries($entries);
+            $cutStart = $n > 0 ?  0 : $skip;
+            $cutEnd = $unlimited ? $pageSize : $limit - $n;
             if ($cutStart != 0 || $cutEnd != $pageSize) {
-                $rawResponse = array_slice($rawResponse, $cutStart, $cutEnd);
+                $entries = array_slice($entries, $cutStart, $cutEnd);
             }
-            //yield from $rawEntries;
-            foreach ($rawEntries as $entry) {
+            //yield from $entries;
+            foreach ($entries as $entry) {
                 yield $entry;
             }
-            $n += count($rawEntries);
+            $n += count($entries);
 
-            $params = $this->nextPage($rawResponse, $params);
+            $params = $this->nextPage($page, $params);
             $hasMore = !is_null($params);
         }
     }
 
-    protected function executeRawSingleRequest(string $method, array $params)
-    {
-        /** @var array $rawResponse */
-        $rawResponse = $this->rawEndpoint->$method(...$params);
-        $this->extractIncluded($rawResponse);
-        return $rawResponse;
-    }
-
-    protected function extractIncluded(array $rawData)
+    protected function loadIncluded(array $rawData)
     {
         $included = $rawData['included'] ?? [];
         foreach ($included as $type => $entries) {
-            echo "loading " . count($entries) . " $type\n";
             $this->router->loadEntries($type, $entries);
         }
-    }
-
-    protected function extractData(string $method, array $rawData)
-    {
-        $path = static::ARRAY_PATH_FOR_ENTRIES[$method] ?? null;
-        $entries = $rawData[$path] ?? null;
-        if (!isset($path, $entries)) {
-            throw new NoDataExtractedException();
-        }
-        return $entries;
-    }
-
-    protected function getByReference($reference)
-    {
-        $id = $reference['id'] ?? null;
-        if (!isset($id)) {
-            throw new InvalidReferenceException();
-        }
-        return $this->getById($id);
-    }
-
-    public function preload(?array $ids)
-    {
-        $wanted = $ids ?? array_keys($this->instancesById);
-        $cached = array_keys($this->cache);
-        $missing = array_diff($wanted, $cached);
-
-        $this->makeRequest()
-            ->filterBy(['id', 'in', $missing])
-            ->getArray();
     }
 
     protected function requestParams(array $request)
     {
         $skip = $request['startAt'] ?? 0;
         $limit = $request['endAt'] ?? null;
-        $params = ['page' => (int)floor($skip / $this->pageSize) + 1];
-        if (isset($request['relationships'])) {
-            $params['includes'] = implode(',', $request['relationships']);
-        }
-        if (isset($request['filter'])) {
-            $params['filter'] = json_encode($request['filter']);
-        }
-        return [$skip, $limit, [$params]];
+        $params = $request['params'] ?? [];
+        $params['page'] = intdiv($skip, $this->pageSize) + 1;
+        $skip %= $this->pageSize;
+        return [$skip, $limit, $params];
     }
 
-    protected function nextPage(array $rawResponse, array $params): ?array
+    protected function nextPage(array $pagination, array $params): ?array
     {
-        $hasMore = $rawResponse['meta']['page']['hasMore'] ?? false;
+        $hasMore = $pagination['hasMore'] ?? false;
         if (!$hasMore) {
             return null;
         }
@@ -206,5 +165,8 @@ abstract class BaseEndpoint
         return $params;
     }
 
+    // use a factory
     protected abstract function makeOne(int $id): BaseModel;
+
+    protected abstract function preload(int $id);
 }

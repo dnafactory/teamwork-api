@@ -8,9 +8,10 @@ class RequestBuilder
 {
     protected BaseEndpoint $endpoint;
     protected array $relationships;
-    protected int $limit;
-    protected int $skip;
+    protected ?int $limit = null;
+    protected int $skip = 0;
     protected array $filter;
+    protected array $params;
 
     public function __construct(BaseEndpoint $endpoint)
     {
@@ -52,8 +53,7 @@ class RequestBuilder
         return $this;
     }
 
-
-    protected function prepareRequest(): array
+    public function prepareRequest(): array
     {
         $request = [];
         if (isset($this->relationships)) {
@@ -66,8 +66,9 @@ class RequestBuilder
             $request['startAt'] = $this->skip;
         }
         if (isset($this->limit)) {
-            $request['endAt'] = $this->skip + $this->limit;
+            $request['endAt'] = $this->limit;
         }
+
         return $request;
     }
 }

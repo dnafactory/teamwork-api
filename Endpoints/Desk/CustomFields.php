@@ -2,16 +2,19 @@
 
 namespace DNAFactory\Teamwork\Endpoints\Desk;
 
+use DNAFactory\Teamwork\Endpoints\Router;
 use DNAFactory\Teamwork\Models\BaseModel;
 use DNAFactory\Teamwork\Models\CustomField;
+use DNAFactory\Teamwork\RawEndpoints\Desk\CustomFields as RawCustomFields;
 
-class CustomFields extends \DNAFactory\Teamwork\Endpoints\BaseEndpoint
+class CustomFields extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'customfields';
-    const ARRAY_PATH_FOR_ENTRIES = [
-        'getById' => 'customfield',
-        'getAll' => 'customfields'
-    ];
+
+    public function __construct(RawCustomFields $rawEndpoint, Router $router)
+    {
+        parent::__construct($rawEndpoint, $router);
+    }
 
     protected function makeOne(int $id): BaseModel
     {
