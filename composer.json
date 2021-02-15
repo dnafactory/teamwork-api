@@ -1,22 +1,25 @@
 {
-  "name": "dnafactory/teamwork-api",
-  "description": "PHP integration with Teamwork's API",
-  "license": [
-  ],
-  "require": {
-    "php": ">=7.0.0",
-    "guzzlehttp/guzzle": "^6.3.1|^7.0.1"
-  },
-  "authors": [
-    {
-      "name": "Daniel Russo",
-      "email": "daniel@dnafactory.it",
-      "role": "Developer"
+    "name": "dnafactory/teamwork-api",
+    "description": "PHP integration with Teamwork's API.",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.2",
+        "nesbot/carbon": "^2.43",
+        "ext-json": "*"
+    },
+    "authors": [
+        {
+            "name": "Domenico Ragusa",
+            "email": "domenico.ragusa@dnafactory.it"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DNAFactory\\Teamwork\\": ""
+        },
+        "files": [
+            "Support/helpers.php"
+        ]
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "DNAFactory\\Teamwork\\": ""
-    }
-  }
 }
