@@ -6,6 +6,7 @@ namespace DNAFactory\Teamwork\Models;
  * @property-read int $id
  * @property-read string $firstName
  * @property-read string $lastName
+ * @property-read string $fullName
  * @property-read string $email
  * @property-read string $organization
  * @property-read string $extraData
@@ -34,6 +35,11 @@ class Customer extends BaseModel
         return $this->getManyReferences($references);
     }
     */
+    protected function getFullName(): string
+    {
+        return "{$this->firstName} {$this->lastName}";
+    }
+
     protected function getCompany(): ?Company
     {
         $reference = $this->getRawAttribute('company');
