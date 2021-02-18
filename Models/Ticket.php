@@ -97,4 +97,9 @@ class Ticket extends BaseModel
         $references = $this->getRawAttribute('followers', []);
         return $this->retriveManyReferences($references);
     }
+
+    public function getLink()
+    {
+        return sprintf('%s/desk/tickets/%d/messages', $this->endpoint->getBaseUrl(), $this->id);
+    }
 }

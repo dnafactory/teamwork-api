@@ -38,6 +38,11 @@ abstract class BaseRawEndpoint
         return $this;
     }
 
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
     public function setWaitMargin(int $waitMargin): BaseRawEndpoint
     {
         $this->waitMargin = $waitMargin;

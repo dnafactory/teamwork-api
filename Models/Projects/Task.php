@@ -46,8 +46,13 @@ class Task extends BaseModel
     public function getResponsibleParties()
     {
         $rawResponsiblePartyIds = $this->getRawAttribute('responsible-party-ids') ?: '';
-        $ids = explode(',',$rawResponsiblePartyIds);
+        $ids = explode(',', $rawResponsiblePartyIds);
         $references = array_map(fn($id) => ['id' => (int)$id, 'type' => 'users'], $ids);
         return $this->retriveManyReferences($references);
+    }
+
+    public function getLink()
+    {
+        return sprintf('%s/#/tasks/%d', $this->endpoint->getBaseUrl(), $this->id);
     }
 }
