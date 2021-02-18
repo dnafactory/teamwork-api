@@ -1,12 +1,9 @@
 <?php
 
-
 namespace DNAFactory\Teamwork\RawEndpoints\Projects;
-
 
 class Tasks extends ProjectsRawEndpoint
 {
-
     public function getMany(array $params)
     {
         $rawResponse = $this->call('/v1/tasks.json', $params);
