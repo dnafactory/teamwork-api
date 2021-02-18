@@ -8,6 +8,7 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read int $id
  * @property-read string $description
  * @property-read string $content
+ * @property-read string $link
  * @property-read int $projectId
  * @property-read string $projectName
  * @property-read int $todoListId
@@ -51,7 +52,7 @@ class Task extends BaseModel
         return $this->retriveManyReferences($references);
     }
 
-    public function getLink()
+    protected function getLink()
     {
         return sprintf('%s/#/tasks/%d', $this->endpoint->getBaseUrl(), $this->id);
     }
