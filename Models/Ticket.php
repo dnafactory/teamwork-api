@@ -13,6 +13,7 @@ use Carbon\Carbon;
  * @property-read Customer|User $updatedBy
  * @property-read string $subject
  * @property-read string $previewText
+ * @property-read string $link
  * @property-read string $originalRecipient
  * @property-read int $responseTimeMins
  * @property-read ?int $resolutionTimeMins
@@ -98,7 +99,7 @@ class Ticket extends BaseModel
         return $this->retriveManyReferences($references);
     }
 
-    public function getLink()
+    protected function getLink()
     {
         return sprintf('%s/desk/tickets/%d/messages', $this->endpoint->getBaseUrl(), $this->id);
     }
