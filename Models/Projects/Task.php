@@ -2,6 +2,7 @@
 
 namespace DNAFactory\Teamwork\Models\Projects;
 
+use DNAFactory\Teamwork\Models\BaseModel;
 
 /**
  * @property-read int $id
@@ -14,9 +15,8 @@ namespace DNAFactory\Teamwork\Models\Projects;
  * @property-read \Carbon\Carbon $dueDate
  * @property-read array $responsibleParty
  */
-class Task extends \DNAFactory\Teamwork\Models\BaseModel
+class Task extends BaseModel
 {
-
     protected function getProjectId()
     {
         return $this->getRawAttribute('project-id');
