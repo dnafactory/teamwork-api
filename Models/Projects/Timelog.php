@@ -25,4 +25,9 @@ class Timelog extends BaseModel
         return $this->minutes * 60;
     }
 
+    public function getUser()
+    {
+        return $this->endpoint->retriveReference(['id' => $this->userId, 'type' => 'users']);
+    }
+
 }

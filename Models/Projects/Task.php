@@ -2,6 +2,7 @@
 
 namespace DNAFactory\Teamwork\Models\Projects;
 
+use DNAFactory\Teamwork\Models\BaseModel;
 
 /**
  * @property-read int $id
@@ -12,10 +13,10 @@ namespace DNAFactory\Teamwork\Models\Projects;
  * @property-read int $todoListId
  * @property-read string $todoListName
  * @property-read \Carbon\Carbon $dueDate
+ * @property-read array $responsibleParty
  */
-class Task extends \DNAFactory\Teamwork\Models\BaseModel
+class Task extends BaseModel
 {
-
     protected function getProjectId()
     {
         return $this->getRawAttribute('project-id');
@@ -40,5 +41,13 @@ class Task extends \DNAFactory\Teamwork\Models\BaseModel
     {
         $rawDueDate = $this->getRawAttribute('due-date') ?: null;
         return $this->convertDate($rawDueDate);
+    }
+
+    public function getResponsibleParties()
+    {
+        $rawResponsiblePartyIds = $this->getRawAttribute('responsible-party-ids') ?: '';
+        $ids = explode(',',$rawResponsiblePartyIds);
+        $references = array_map(fn($id) => ['id' => (int)$id, 'type' => 'users'], $ids);
+        return $this->retriveManyReferences($references);
     }
 }
