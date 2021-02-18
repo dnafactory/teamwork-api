@@ -6,7 +6,7 @@ class Tasks extends ProjectsRawEndpoint
 {
     public function getMany(array $params)
     {
-        $rawResponse = $this->call('/v1/tasks.json', $params);
+        $rawResponse = $this->call('/projects/api/v1/tasks.json', $params);
         return $this->extractData($rawResponse, 'todo-items');
     }
 
