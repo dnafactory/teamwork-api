@@ -50,4 +50,9 @@ class Task extends BaseModel
         $references = array_map(fn($id) => ['id' => (int)$id, 'type' => 'users'], $ids);
         return $this->retriveManyReferences($references);
     }
+
+    public function getLink()
+    {
+        return sprintf('%s/#/tasks/%d', $this->endpoint->getBaseUrl(), $this->id);
+    }
 }

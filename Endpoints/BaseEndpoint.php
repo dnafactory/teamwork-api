@@ -31,6 +31,11 @@ abstract class BaseEndpoint
         $this->router->registerEndpoint($this);
     }
 
+    public function getBaseUrl()
+    {
+        return $this->rawEndpoint->getBaseUrl();
+    }
+
     public function setPageSize(int $pageSize): BaseEndpoint
     {
         $this->pageSize = $pageSize;
