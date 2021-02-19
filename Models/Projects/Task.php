@@ -15,6 +15,7 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read string $todoListName
  * @property-read \Carbon\Carbon $dueDate
  * @property-read array $responsibleParties
+ * @property-read array $assignedToTeams
  */
 class Task extends BaseModel
 {
@@ -49,6 +50,16 @@ class Task extends BaseModel
         $rawResponsiblePartyIds = $this->getRawAttribute('responsible-party-ids') ?: '';
         $ids = explode(',', $rawResponsiblePartyIds);
         $references = array_map(fn($id) => ['id' => (int)$id, 'type' => 'users'], $ids);
+        return $this->retriveManyReferences($references);
+    }
+
+    protected function getAssignedToTeams()
+    {
+        $rawAssignedToTeams = $this->getRawAttribute('assignedToTeams') ?? [];
+        $references = [];
+        foreach ($rawAssignedToTeams as $rawTeam) {
+            $references[] = ['id' => $rawTeam['teamId'], 'type' => 'team'];
+        }
         return $this->retriveManyReferences($references);
     }
 
