@@ -3,7 +3,6 @@
 namespace DNAFactory\Teamwork\Endpoints\Desk;
 
 use DNAFactory\Teamwork\Endpoints\Router;
-use DNAFactory\Teamwork\Models\BaseModel;
 use DNAFactory\Teamwork\Models\CustomField;
 use DNAFactory\Teamwork\RawEndpoints\Desk\CustomFields as RawCustomFields;
 
@@ -16,7 +15,7 @@ class CustomFields extends DeskEndpoint
         parent::__construct($rawEndpoint, $router);
     }
 
-    protected function makeOne(int $id): BaseModel
+    protected function makeOne(int $id): CustomField
     {
         return new CustomField($this, $id, ['id' => $id]);
     }

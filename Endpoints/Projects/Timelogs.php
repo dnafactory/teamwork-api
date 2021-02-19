@@ -4,7 +4,6 @@ namespace DNAFactory\Teamwork\Endpoints\Projects;
 
 use Carbon\Carbon;
 use DNAFactory\Teamwork\Endpoints\Router;
-use DNAFactory\Teamwork\Models\BaseModel;
 use DNAFactory\Teamwork\Models\Projects\Timelog;
 use DNAFactory\Teamwork\RawEndpoints\Projects\Timelogs as RawTimelogs;
 use DNAFactory\Teamwork\Support\RequestBuilder;
@@ -27,7 +26,7 @@ class Timelogs extends ProjectsEndpoint
             ]);
     }
 
-    protected function makeOne(int $id): BaseModel
+    protected function makeOne(int $id): Timelog
     {
         return new Timelog($this, $id, ['id' => $id]);
     }
