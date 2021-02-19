@@ -3,6 +3,7 @@
 namespace DNAFactory\Teamwork\Endpoints;
 
 use DNAFactory\Teamwork\Exceptions\InvalidReferenceException;
+use DNAFactory\Teamwork\Exceptions\ItemNotFoundException;
 use DNAFactory\Teamwork\Models\BaseModel;
 use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 use DNAFactory\Teamwork\Support\RequestBuilder;
@@ -70,7 +71,7 @@ abstract class BaseEndpoint
     public function loadRawEntries(array $entries)
     {
         foreach ($entries as $entry) {
-            $id = $entry['id'];
+            $id = (int)$entry['id'];
             $this->cache[$id] = $entry;
         }
     }
@@ -96,8 +97,9 @@ abstract class BaseEndpoint
 
     public function getRawById(int $id)
     {
+        $this->preload($id);
         if (!isset($this->cache[$id])) {
-            $this->preload($id);
+            throw new ItemNotFoundException("Item " . static::REF_TYPE_NAME . "<{$id}> was not found.");
         }
         return $this->cache[$id];
     }
@@ -125,7 +127,7 @@ abstract class BaseEndpoint
             [$entries, $included, $page] = $this->rawEndpoint->getMany($params);
             $this->loadIncluded($included);
             $this->loadRawEntries($entries);
-            $cutStart = $n > 0 ?  0 : $skip;
+            $cutStart = $n > 0 ? 0 : $skip;
             $cutEnd = $unlimited ? $pageSize : $limit - $n;
             if ($cutStart != 0 || $cutEnd != $pageSize) {
                 $entries = array_slice($entries, $cutStart, $cutEnd);
@@ -170,8 +172,15 @@ abstract class BaseEndpoint
         return $params;
     }
 
+    protected function preload(int $id)
+    {
+        if (isset($this->cache[$id])) {
+            return;
+        }
+        [$rawEntries, $included, $page] = $this->rawEndpoint->getById($id, []);
+        $this->loadRawEntries([$rawEntries]);
+    }
+
     // use a factory
     protected abstract function makeOne(int $id): BaseModel;
-
-    protected abstract function preload(int $id);
 }

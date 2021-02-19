@@ -11,7 +11,6 @@ use DNAFactory\Teamwork\Support\RequestBuilder;
 class Timelogs extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'timelogs';
-    const ARRAY_KEY_FOR_ENTRIES = 'timelogs';
 
     public function __construct(RawTimelogs $rawEndpoint, Router $router)
     {

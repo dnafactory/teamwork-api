@@ -4,6 +4,12 @@ namespace DNAFactory\Teamwork\RawEndpoints\Projects;
 
 class Tasks extends ProjectsRawEndpoint
 {
+    public function getById(int $id, array $params)
+    {
+        $rawResponse = $this->call("/projects/api/v1/tasks/{$id}.json", $params);
+        return $this->extractData($rawResponse, 'todo-item');
+    }
+
     public function getMany(array $params)
     {
         $rawResponse = $this->call('/projects/api/v1/tasks.json', $params);

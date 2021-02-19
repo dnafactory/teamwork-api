@@ -23,7 +23,7 @@ class Router
     {
         $type = $endpoint::REF_TYPE_NAME;
         if (isset($this->endpoints[$type])) {
-            throw new EndpointAlreadyRegisteredException();
+            throw new EndpointAlreadyRegisteredException("endpoint of type '$type' already registered");
         }
         $this->endpoints[$type] = $endpoint;
     }

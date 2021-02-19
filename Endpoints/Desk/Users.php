@@ -9,7 +9,6 @@ use DNAFactory\Teamwork\RawEndpoints\Desk\Users as RawUsers;
 class Users extends DeskEndpoint
 {
     const REF_TYPE_NAME = 'users';
-    const ARRAY_KEY_FOR_ENTRIES = 'users';
 
     public function __construct(RawUsers $rawEndpoint, Router $router)
     {

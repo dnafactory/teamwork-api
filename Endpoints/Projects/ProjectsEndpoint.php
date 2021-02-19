@@ -19,14 +19,4 @@ abstract class ProjectsEndpoint extends BaseEndpoint
         }
         return [$skip, $limit, $params];
     }
-
-    // dummy method
-    protected function preload(int $id)
-    {
-        if (isset($this->cache[$id])) {
-            return;
-        }
-        $this->cache[$id] = ['id' => $id];
-
-    }
 }

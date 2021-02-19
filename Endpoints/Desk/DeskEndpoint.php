@@ -21,6 +21,9 @@ abstract class DeskEndpoint extends BaseEndpoint
 
     protected function preload(int $id)
     {
+        if (isset($this->cache[$id])) {
+            return;
+        }
         $instanced = array_keys($this->instancesById);
         $wanted = array_unique([$id, ...$instanced]);
         $cached = array_keys($this->cache);
