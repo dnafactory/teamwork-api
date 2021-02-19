@@ -116,6 +116,8 @@ abstract class BaseRawEndpoint
         return [$rawData, $included, $page];
     }
 
+    public abstract function getById(int $id, array $params);
+
     public abstract function getMany(array $params);
 
     public abstract function setToken(string $token): BaseRawEndpoint;

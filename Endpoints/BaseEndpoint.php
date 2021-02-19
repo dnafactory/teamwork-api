@@ -172,8 +172,15 @@ abstract class BaseEndpoint
         return $params;
     }
 
+    protected function preload(int $id)
+    {
+        if (isset($this->cache[$id])) {
+            return;
+        }
+        [$rawEntries, $included, $page] = $this->rawEndpoint->getById($id, []);
+        $this->loadRawEntries([$rawEntries]);
+    }
+
     // use a factory
     protected abstract function makeOne(int $id): BaseModel;
-
-    protected abstract function preload(int $id);
 }
