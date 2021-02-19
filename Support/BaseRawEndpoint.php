@@ -3,6 +3,7 @@
 namespace DNAFactory\Teamwork\Support;
 
 use DNAFactory\Teamwork\Exceptions\ConnectionException;
+use DNAFactory\Teamwork\Exceptions\ItemNotFoundException;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -67,8 +68,11 @@ abstract class BaseRawEndpoint
             try {
                 $response = $this->rawCall($endpoint, $params, $method, $encoding);
             } catch (RequestException $e) {
-                echo $e->getMessage();
+                //echo $e->getMessage();
                 $response = $e->hasResponse() ? $e->getResponse() : null;
+                if(!is_null($response) && $response->getStatusCode() == 404){
+                    throw new ItemNotFoundException("Endpoint call '$endpoint' gives 404 Not Found.");
+                }
                 $this->waitRateLimit($response);
                 continue;
             }

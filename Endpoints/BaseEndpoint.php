@@ -3,6 +3,7 @@
 namespace DNAFactory\Teamwork\Endpoints;
 
 use DNAFactory\Teamwork\Exceptions\InvalidReferenceException;
+use DNAFactory\Teamwork\Exceptions\ItemNotFoundException;
 use DNAFactory\Teamwork\Models\BaseModel;
 use DNAFactory\Teamwork\Support\BaseRawEndpoint;
 use DNAFactory\Teamwork\Support\RequestBuilder;
@@ -96,8 +97,9 @@ abstract class BaseEndpoint
 
     public function getRawById(int $id)
     {
+        $this->preload($id);
         if (!isset($this->cache[$id])) {
-            $this->preload($id);
+            throw new ItemNotFoundException("Item " . static::REF_TYPE_NAME . "<{$id}> was not found.");
         }
         return $this->cache[$id];
     }
