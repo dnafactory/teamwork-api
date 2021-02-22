@@ -17,6 +17,8 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read int $seconds
  * @property-read \Carbon\Carbon $timeLogged
  * @property-read User $user
+ * @property-read Task $task
+ * @property-read Project $project
  */
 class Timelog extends BaseModel
 {
@@ -31,4 +33,15 @@ class Timelog extends BaseModel
         return $this->endpoint->retriveReference($reference);
     }
 
+    protected function getTask(): Task
+    {
+        $reference = $this->getRawAttribute('task');
+        return $this->endpoint->retriveReference($reference);
+    }
+
+    protected function getProject(): Project
+    {
+        $reference = $this->getRawAttribute('project');
+        return $this->endpoint->retriveReference($reference);
+    }
 }
