@@ -16,6 +16,7 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read \Carbon\Carbon $dueDate
  * @property-read array $responsibleParties
  * @property-read array $assignedToTeams
+ * @property-read array $allAssignees
  */
 class Task extends BaseModel
 {
@@ -64,6 +65,20 @@ class Task extends BaseModel
             $references[] = ['id' => $rawTeam['teamId'], 'type' => 'team'];
         }
         return $this->retriveManyReferences($references);
+    }
+
+    protected function getAllAssignees()
+    {
+        $assignees = $this->responsibleParties;
+        foreach ($this->assignedToTeams as $team) {
+            /** @var Team $team */
+            foreach ($team->members as $member) {
+                if (!in_array($member, $assignees)) {
+                    $assignees[] = $member;
+                }
+            }
+        }
+        return $assignees;
     }
 
     protected function getLink()
