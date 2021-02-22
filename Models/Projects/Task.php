@@ -17,6 +17,7 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read array $responsibleParties
  * @property-read array $assignedToTeams
  * @property-read array $allAssignees
+ * @property-read Tag[] $tags
  */
 class Task extends BaseModel
 {
@@ -67,6 +68,16 @@ class Task extends BaseModel
         return $this->retriveManyReferences($references);
     }
 
+    protected function getTags()
+    {
+        $rawReferences = $this->getRawAttribute('tags', []);
+        $references = [];
+        foreach ($rawReferences as $rawReference) {
+            $references[] = ['id' => $rawReference['id'], 'type' => 'tags'];
+        }
+        return $this->retriveManyReferences($references);
+    }
+
     protected function getAllAssignees()
     {
         $assignees = $this->responsibleParties;
@@ -84,5 +95,27 @@ class Task extends BaseModel
     protected function getLink()
     {
         return sprintf('%s/#/tasks/%d', $this->endpoint->getBaseUrl(), $this->id);
+    }
+
+    public function hasEveryTag(array $tags)
+    {
+        $ownTags = $this->tags;
+        foreach ($tags as $tag) {
+            if (!in_array($tag, $ownTags)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function hasAnyTag(array $tags)
+    {
+        $ownTags = $this->tags;
+        foreach ($tags as $tag) {
+            if (in_array($tag, $ownTags)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
