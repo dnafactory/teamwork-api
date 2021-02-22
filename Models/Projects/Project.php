@@ -31,4 +31,26 @@ class Project extends BaseModel
     {
         return sprintf('%s/#/projects/%d', $this->endpoint->getBaseUrl(), $this->id);
     }
+
+    public function hasEveryTag(array $tags)
+    {
+        $ownTags = $this->tags;
+        foreach ($tags as $tag) {
+            if (!in_array($tag, $ownTags)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function hasAnyTag(array $tags)
+    {
+        $ownTags = $this->tags;
+        foreach ($tags as $tag) {
+            if (in_array($tag, $ownTags)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
