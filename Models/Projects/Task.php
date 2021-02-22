@@ -53,7 +53,7 @@ class Task extends BaseModel
             return [];
         }
         $ids = explode(',', $rawResponsiblePartyIds);
-        $references = array_map(fn($id) => ['id' => (int)$id, 'type' => 'users'], $ids);
+        $references = array_map(fn($id) => ['id' => (int)$id, 'type' => 'user'], $ids);
         return $this->retriveManyReferences($references);
     }
 
