@@ -8,7 +8,7 @@ use DNAFactory\Teamwork\RawEndpoints\Projects\Tasks as RawTasks;
 
 class Tasks extends ProjectsEndpoint
 {
-    const REF_TYPE_NAME = 'task';
+    const REF_TYPE_NAME = 'tasks';
 
     public function __construct(RawTasks $rawEndpoint, Router $router)
     {

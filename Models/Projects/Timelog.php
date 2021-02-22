@@ -2,8 +2,8 @@
 
 namespace DNAFactory\Teamwork\Models\Projects;
 
+use DNAFactory\Teamwork\Endpoints\Projects\People;
 use DNAFactory\Teamwork\Models\BaseModel;
-use DNAFactory\Teamwork\Models\User;
 
 /**
  * @property-read int $id
@@ -16,18 +16,19 @@ use DNAFactory\Teamwork\Models\User;
  * @property-read int $minutes
  * @property-read int $seconds
  * @property-read \Carbon\Carbon $timeLogged
- * @property-read int $userId
+ * @property-read User $user
  */
 class Timelog extends BaseModel
 {
-    public function getSeconds(): int
+    protected function getSeconds(): int
     {
         return $this->minutes * 60;
     }
 
-    public function getUser()
+    protected function getUser(): User
     {
-        return $this->endpoint->retriveReference(['id' => $this->userId, 'type' => 'users']);
+        $reference = ['id' => $this->userId, 'type' => 'user'];
+        return $this->endpoint->retriveReference($reference);
     }
 
 }
