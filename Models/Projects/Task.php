@@ -9,6 +9,7 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read string $description
  * @property-read string $content
  * @property-read string $link
+ * @property-read Project $project
  * @property-read int $projectId
  * @property-read string $projectName
  * @property-read int $todoListId
@@ -29,6 +30,12 @@ class Task extends BaseModel
     protected function getProjectName()
     {
         return $this->getRawAttribute('project-name');
+    }
+
+    protected function getProject()
+    {
+        $reference = ['id' => $this->projectId, 'type' => 'projects'];
+        return $this->endpoint->retriveReference($reference);
     }
 
     protected function getTodoListId()
