@@ -21,7 +21,7 @@ class Project extends BaseModel
         return $this->retriveManyReferences($references);
     }
 
-    protected function getCompany(): Company
+    protected function getCompany(): ?Company
     {
         $reference = $this->getRawAttribute('company');
         return $this->endpoint->retriveReference($reference);

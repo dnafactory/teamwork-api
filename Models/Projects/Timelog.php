@@ -33,13 +33,13 @@ class Timelog extends BaseModel
         return $this->endpoint->retriveReference($reference);
     }
 
-    protected function getTask(): Task
+    protected function getTask(): ?Task
     {
         $reference = $this->getRawAttribute('task');
         return $this->endpoint->retriveReference($reference);
     }
 
-    protected function getProject(): Project
+    protected function getProject(): ?Project
     {
         $reference = $this->getRawAttribute('project');
         return $this->endpoint->retriveReference($reference);
