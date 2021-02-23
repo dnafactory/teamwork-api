@@ -14,10 +14,10 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read int $todoListId
  * @property-read string $todoListName
  * @property-read \Carbon\Carbon $dueDate
- * @property-read array $responsibleParties
- * @property-read array $assignedToTeams
- * @property-read array $allAssignees
  * @property-read Tag[] $tags
+ * @property-read User[] $responsibleParties
+ * @property-read Team[] $assignedToTeams
+ * @property-read User[] $allAssignees
  */
 class Task extends BaseModel
 {

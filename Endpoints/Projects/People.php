@@ -8,7 +8,7 @@ use DNAFactory\Teamwork\RawEndpoints\Projects\People as RawPeople;
 
 class People extends ProjectsEndpoint
 {
-    public const REF_TYPE_NAME = 'user';
+    const REF_TYPE_NAME = 'user';
 
     public function __construct(RawPeople $rawEndpoint, Router $router)
     {
