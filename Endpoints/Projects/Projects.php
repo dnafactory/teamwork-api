@@ -8,7 +8,7 @@ use DNAFactory\Teamwork\RawEndpoints\Projects\Projects as RawProjects;
 
 class Projects extends ProjectsEndpoint
 {
-    public const REF_TYPE_NAME = 'projects';
+    const REF_TYPE_NAME = 'projects';
 
     public function __construct(RawProjects $rawEndpoint, Router $router)
     {
