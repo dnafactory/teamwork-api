@@ -36,6 +36,9 @@ class Project extends BaseModel
     {
         $ownTags = $this->tags;
         foreach ($tags as $tag) {
+            if (is_int($tag)) {
+                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
+            }
             if (!in_array($tag, $ownTags)) {
                 return false;
             }
@@ -47,6 +50,9 @@ class Project extends BaseModel
     {
         $ownTags = $this->tags;
         foreach ($tags as $tag) {
+            if (is_int($tag)) {
+                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
+            }
             if (in_array($tag, $ownTags)) {
                 return true;
             }
