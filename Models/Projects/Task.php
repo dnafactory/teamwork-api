@@ -15,6 +15,8 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read int $todoListId
  * @property-read string $todoListName
  * @property-read TodoList $todoList
+ * @property-read int $parentTaskId
+ * @property-read ?Task $parentTask
  * @property-read \Carbon\Carbon $dueDate
  * @property-read Tag[] $tags
  * @property-read User[] $responsibleParties
@@ -54,6 +56,18 @@ class Task extends BaseModel
     protected function getTodoList()
     {
         $reference = ['id' => $this->todoListId, 'type' => 'tasklists'];
+        return $this->endpoint->retriveReference($reference);
+    }
+
+    protected function getParentTaskId()
+    {
+        $value = $this->getRawAttribute('parentTaskId');
+        return $value ? (int)$value : null;
+    }
+
+    protected function getParentTask()
+    {
+        $reference = ['id' => $this->parentTaskId, 'type' => 'tasks'];
         return $this->endpoint->retriveReference($reference);
     }
 
