@@ -3,6 +3,7 @@
 namespace DNAFactory\Teamwork\Models\Projects;
 
 use DNAFactory\Teamwork\Models\BaseModel;
+use DNAFactory\Teamwork\Support\TaggableTrait;
 
 /**
  * @property-read int $id
@@ -14,6 +15,9 @@ use DNAFactory\Teamwork\Models\BaseModel;
  * @property-read string $projectName
  * @property-read int $todoListId
  * @property-read string $todoListName
+ * @property-read TodoList $todoList
+ * @property-read int $parentTaskId
+ * @property-read ?Task $parentTask
  * @property-read \Carbon\Carbon $dueDate
  * @property-read Tag[] $tags
  * @property-read User[] $responsibleParties
@@ -22,9 +26,12 @@ use DNAFactory\Teamwork\Models\BaseModel;
  */
 class Task extends BaseModel
 {
+    use TaggableTrait;
+
     protected function getProjectId()
     {
-        return $this->getRawAttribute('project-id');
+        $value = $this->getRawAttribute('project-id');
+        return $value ? (int)$value : null;
     }
 
     protected function getProjectName()
@@ -40,12 +47,31 @@ class Task extends BaseModel
 
     protected function getTodoListId()
     {
-        return $this->getRawAttribute('todo-list-id');
+        $value = $this->getRawAttribute('todo-list-id');
+        return $value ? (int)$value : null;
     }
 
     protected function getTodoListName()
     {
         return $this->getRawAttribute('todo-list-name');
+    }
+
+    protected function getTodoList()
+    {
+        $reference = ['id' => $this->todoListId, 'type' => 'tasklists'];
+        return $this->endpoint->retriveReference($reference);
+    }
+
+    protected function getParentTaskId()
+    {
+        $value = $this->getRawAttribute('parentTaskId');
+        return $value ? (int)$value : null;
+    }
+
+    protected function getParentTask()
+    {
+        $reference = ['id' => $this->parentTaskId, 'type' => 'tasks'];
+        return $this->endpoint->retriveReference($reference);
     }
 
     protected function getDueDate()
@@ -102,33 +128,5 @@ class Task extends BaseModel
     protected function getLink()
     {
         return sprintf('%s/#/tasks/%d', $this->endpoint->getBaseUrl(), $this->id);
-    }
-
-    public function hasEveryTag(array $tags)
-    {
-        $ownTags = $this->tags;
-        foreach ($tags as $tag) {
-            if (is_int($tag)) {
-                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
-            }
-            if (!in_array($tag, $ownTags)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function hasAnyTag(array $tags)
-    {
-        $ownTags = $this->tags;
-        foreach ($tags as $tag) {
-            if (is_int($tag)) {
-                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
-            }
-            if (in_array($tag, $ownTags)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
