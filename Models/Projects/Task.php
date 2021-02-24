@@ -17,7 +17,7 @@ use DNAFactory\Teamwork\Support\TaggableTrait;
  * @property-read string $todoListName
  * @property-read TodoList $todoList
  * @property-read int $parentTaskId
- * @property-read ?Task $parentTask
+ * @property-read Task|null $parentTask
  * @property-read \Carbon\Carbon $dueDate
  * @property-read Tag[] $tags
  * @property-read User[] $responsibleParties
