@@ -24,7 +24,8 @@ class Task extends BaseModel
 {
     protected function getProjectId()
     {
-        return $this->getRawAttribute('project-id');
+        $value = $this->getRawAttribute('project-id');
+        return $value ? (int)$value : null;
     }
 
     protected function getProjectName()
@@ -40,7 +41,8 @@ class Task extends BaseModel
 
     protected function getTodoListId()
     {
-        return $this->getRawAttribute('todo-list-id');
+        $value = $this->getRawAttribute('todo-list-id');
+        return $value ? (int)$value : null;
     }
 
     protected function getTodoListName()
