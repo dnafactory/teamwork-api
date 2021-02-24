@@ -3,6 +3,7 @@
 namespace DNAFactory\Teamwork\Models\Projects;
 
 use DNAFactory\Teamwork\Models\BaseModel;
+use DNAFactory\Teamwork\Support\TaggableTrait;
 
 /**
  * @property-read int $id
@@ -15,6 +16,8 @@ use DNAFactory\Teamwork\Models\BaseModel;
  */
 class TodoList extends BaseModel
 {
+    use TaggableTrait;
+
     protected function getProjectId()
     {
         $value = $this->getRawAttribute('projectId');
@@ -40,33 +43,5 @@ class TodoList extends BaseModel
             $references[] = ['id' => (int)$rawReference['id'], 'type' => 'tags'];
         }
         return $this->retriveManyReferences($references);
-    }
-
-    public function hasEveryTag(array $tags)
-    {
-        $ownTags = $this->tags;
-        foreach ($tags as $tag) {
-            if (is_int($tag)) {
-                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
-            }
-            if (!in_array($tag, $ownTags)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function hasAnyTag(array $tags)
-    {
-        $ownTags = $this->tags;
-        foreach ($tags as $tag) {
-            if (is_int($tag)) {
-                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
-            }
-            if (in_array($tag, $ownTags)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
