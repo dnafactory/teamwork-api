@@ -46,6 +46,10 @@ abstract class BaseEndpoint
     public function flushCache(): BaseEndpoint
     {
         $this->cache = [];
+        foreach ($this->instancesById as $instance) {
+            /** @var BaseModel $instance */
+            $instance->unload();
+        }
         return $this;
     }
 
@@ -73,6 +77,9 @@ abstract class BaseEndpoint
         foreach ($entries as $entry) {
             $id = (int)$entry['id'];
             $this->cache[$id] = $entry;
+            if (isset($this->instancesById[$id])) {
+                $this->instancesById[$id]->unload();
+            }
         }
     }
 

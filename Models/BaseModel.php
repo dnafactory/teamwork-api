@@ -24,7 +24,7 @@ abstract class BaseModel
 
     public function __get($name)
     {
-        if(isset($this->customFields[$name])){
+        if (isset($this->customFields[$name])) {
             return $this->extractCustomField($name);
         }
         $getter = 'get' . ucfirst($name);
@@ -34,13 +34,25 @@ abstract class BaseModel
         return $this->getRawAttribute($name);
     }
 
-    public function getRawAttribute($name, $default = null)
+    public function unload()
     {
-        if (!isset($this->rawData[$name]) && !$this->loaded) {
+        $this->rawData = ['id' => $this->id];
+        $this->loaded = false;
+    }
+
+    public function getRawData(): array
+    {
+        if (!$this->loaded) {
             $this->rawData = $this->endpoint->getRawById($this->id);
             $this->loaded = true;
         }
-        return $this->rawData[$name] ?? $default;
+        return $this->rawData;
+    }
+
+    public function getRawAttribute($name, $default = null)
+    {
+        $rawData = $this->getRawData();
+        return $rawData[$name] ?? $default;
     }
 
     public function extractRawCustomField(int $id, $default = null): ?array
