@@ -6,10 +6,10 @@ trait TaggableTrait
 {
     public function hasEveryTag(array $tags)
     {
-        $ownTags = $this->tags;
+        $ownTags = array_map(fn($tag) => $tag->id, $this->tags);
         foreach ($tags as $tag) {
-            if (is_int($tag)) {
-                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
+            if (!is_int($tag)) {
+                $tag = $tag->id;
             }
             if (!in_array($tag, $ownTags)) {
                 return false;
@@ -20,10 +20,10 @@ trait TaggableTrait
 
     public function hasAnyTag(array $tags)
     {
-        $ownTags = $this->tags;
+        $ownTags = array_map(fn($tag) => $tag->id, $this->tags);
         foreach ($tags as $tag) {
-            if (is_int($tag)) {
-                $tag = $this->endpoint->retriveReference(['id' => $tag, 'type' => 'tags']);
+            if (!is_int($tag)) {
+                $tag = $tag->id;
             }
             if (in_array($tag, $ownTags)) {
                 return true;
