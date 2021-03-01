@@ -67,4 +67,14 @@ class Router
         }
         return $endpoint;
     }
+
+    public function flushAllCaches()
+    {
+        foreach ($this->endpoints as $groupedEndpoints) {
+            foreach ($groupedEndpoints as $endpoint) {
+                /** @var BaseEndpoint $endpoint */
+                $endpoint->flushCache();
+            }
+        }
+    }
 }
