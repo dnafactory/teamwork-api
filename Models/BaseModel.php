@@ -40,6 +40,11 @@ abstract class BaseModel
         $this->loaded = false;
     }
     
+    public function getEndpoint(): BaseEndpoint
+    {
+        return $this->endpoint;
+    }
+
     protected function getId()
     {
         return $this->id;
