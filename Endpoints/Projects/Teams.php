@@ -17,6 +17,6 @@ class Teams extends ProjectsEndpoint
 
     protected function makeOne(int $id): Team
     {
-        return new Team($this, $id, ['id' => $id]);
+        return new Team($this, $id);
     }
 }

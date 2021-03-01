@@ -21,7 +21,7 @@ class CustomFieldOptions extends DeskEndpoint
 
     protected function makeOne(int $id): CustomFieldOption
     {
-        return new CustomFieldOption($this, $id, ['id' => $id]);
+        return new CustomFieldOption($this, $id);
     }
 
     public function makeRequest(): RequestBuilder

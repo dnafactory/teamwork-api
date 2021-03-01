@@ -17,6 +17,6 @@ class Tasks extends ProjectsEndpoint
 
     protected function makeOne(int $id): Task
     {
-        return new Task($this, $id, ['id' => $id]);
+        return new Task($this, $id);
     }
 }

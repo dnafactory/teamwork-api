@@ -29,6 +29,6 @@ class Timelogs extends DeskEndpoint
 
     protected function makeOne(int $id): Timelog
     {
-        return new Timelog($this, $id, ['id' => $id]);
+        return new Timelog($this, $id);
     }
 }

@@ -8,17 +8,17 @@ use DNAFactory\Teamwork\Endpoints\BaseEndpoint;
 abstract class BaseModel
 {
     protected BaseEndpoint $endpoint;
-    protected $id;
+    protected int $id;
     protected array $rawData;
     protected bool $loaded;
     protected array $customFields;
 
-    public function __construct(BaseEndpoint $endpoint, $id, array $rawData = [], bool $loaded = false)
+    public function __construct(BaseEndpoint $endpoint, int $id)
     {
         $this->endpoint = $endpoint;
         $this->id = $id;
-        $this->rawData = $rawData;
-        $this->loaded = $loaded;
+        $this->rawData = [];
+        $this->loaded = false;
         $this->customFields = [];
     }
 
@@ -38,6 +38,11 @@ abstract class BaseModel
     {
         $this->rawData = ['id' => $this->id];
         $this->loaded = false;
+    }
+    
+    protected function getId()
+    {
+        return $this->id;
     }
 
     public function getRawData(): array

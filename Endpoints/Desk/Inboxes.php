@@ -17,6 +17,6 @@ class Inboxes extends DeskEndpoint
 
     protected function makeOne(int $id): Inbox
     {
-        return new Inbox($this, $id, ['id' => $id]);
+        return new Inbox($this, $id);
     }
 }

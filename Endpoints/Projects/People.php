@@ -17,6 +17,6 @@ class People extends ProjectsEndpoint
 
     protected function makeOne(int $id): User
     {
-        return new User($this, $id, ['id' => $id]);
+        return new User($this, $id);
     }
 }

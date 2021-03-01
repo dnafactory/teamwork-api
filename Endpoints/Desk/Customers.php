@@ -17,6 +17,6 @@ class Customers extends DeskEndpoint
 
     protected function makeOne(int $id): Customer
     {
-        return new Customer($this, $id, ['id' => $id]);
+        return new Customer($this, $id);
     }
 }

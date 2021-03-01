@@ -17,6 +17,6 @@ class Companies extends DeskEndpoint
 
     protected function makeOne(int $id): Company
     {
-        return new Company($this, $id, ['id' => $id]);
+        return new Company($this, $id);
     }
 }
