@@ -8,23 +8,23 @@ use DNAFactory\Teamwork\Endpoints\BaseEndpoint;
 abstract class BaseModel
 {
     protected BaseEndpoint $endpoint;
-    protected $id;
+    protected int $id;
     protected array $rawData;
     protected bool $loaded;
     protected array $customFields;
 
-    public function __construct(BaseEndpoint $endpoint, $id, array $rawData = [], bool $loaded = false)
+    public function __construct(BaseEndpoint $endpoint, int $id)
     {
         $this->endpoint = $endpoint;
         $this->id = $id;
-        $this->rawData = $rawData;
-        $this->loaded = $loaded;
+        $this->rawData = [];
+        $this->loaded = false;
         $this->customFields = [];
     }
 
     public function __get($name)
     {
-        if(isset($this->customFields[$name])){
+        if (isset($this->customFields[$name])) {
             return $this->extractCustomField($name);
         }
         $getter = 'get' . ucfirst($name);
@@ -34,13 +34,35 @@ abstract class BaseModel
         return $this->getRawAttribute($name);
     }
 
-    public function getRawAttribute($name, $default = null)
+    public function unload()
     {
-        if (!isset($this->rawData[$name]) && !$this->loaded) {
+        $this->rawData = ['id' => $this->id];
+        $this->loaded = false;
+    }
+    
+    public function getEndpoint(): BaseEndpoint
+    {
+        return $this->endpoint;
+    }
+
+    protected function getId()
+    {
+        return $this->id;
+    }
+
+    public function getRawData(): array
+    {
+        if (!$this->loaded) {
             $this->rawData = $this->endpoint->getRawById($this->id);
             $this->loaded = true;
         }
-        return $this->rawData[$name] ?? $default;
+        return $this->rawData;
+    }
+
+    public function getRawAttribute($name, $default = null)
+    {
+        $rawData = $this->getRawData();
+        return $rawData[$name] ?? $default;
     }
 
     public function extractRawCustomField(int $id, $default = null): ?array
@@ -66,7 +88,7 @@ abstract class BaseModel
         return $definition->convert($rawValue);
     }
 
-    protected function retriveManyReferences(array $references)
+    protected function retriveManyReferences(array $references, ?string $namespace = null)
     {
         $data = [];
         foreach ($references as $reference) {

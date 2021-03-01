@@ -17,6 +17,6 @@ class TodoLists extends ProjectsEndpoint
 
     protected function makeOne(int $id): TodoList
     {
-        return new TodoList($this, $id, ['id' => $id]);
+        return new TodoList($this, $id);
     }
 }

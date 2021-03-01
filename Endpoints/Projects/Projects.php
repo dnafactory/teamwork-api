@@ -17,6 +17,6 @@ class Projects extends ProjectsEndpoint
 
     protected function makeOne(int $id): Project
     {
-        return new Project($this, $id, ['id' => $id]);
+        return new Project($this, $id);
     }
 }

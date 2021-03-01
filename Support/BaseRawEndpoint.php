@@ -22,20 +22,16 @@ abstract class BaseRawEndpoint
     protected int $waitMargin = 1;
     protected int $maximumTries = 5;
 
-    public function __construct(HttpClient $httpClient)
+    public function __construct(HttpClient $httpClient, string $baseUrl, string $token)
     {
         $this->httpClient = $httpClient;
+        $this->baseUrl = $baseUrl;
+        $this->setToken($token);
     }
 
     public function setHeader(string $name, $value)
     {
         $this->httpParams['headers'][$name] = $value;
-        return $this;
-    }
-
-    public function setBaseUrl(string $baseUrl)
-    {
-        $this->baseUrl = $baseUrl;
         return $this;
     }
 

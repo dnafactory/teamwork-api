@@ -17,6 +17,6 @@ class CustomFields extends DeskEndpoint
 
     protected function makeOne(int $id): CustomField
     {
-        return new CustomField($this, $id, ['id' => $id]);
+        return new CustomField($this, $id);
     }
 }

@@ -54,10 +54,10 @@ class WebhookAdapter
                 $customers[] = $thread['customer'];
             }
         }
-        $this->router->loadEntries('users', $users);
-        $this->router->loadEntries('customers', $customers);
-        $this->router->loadEntries('tickets', [$adaptedTicket]);
+        $this->router->loadEntries($users, 'users', 'desk');
+        $this->router->loadEntries($customers, 'customers', 'desk');
+        $this->router->loadEntries([$adaptedTicket], 'tickets', 'desk');
 
-        return $this->router->retriveReference(['id' => $ticketId, 'type' => 'tickets']);
+        return $this->router->retriveReference(['id' => $ticketId, 'type' => 'tickets'], 'desk');
     }
 }

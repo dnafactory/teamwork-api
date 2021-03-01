@@ -17,6 +17,6 @@ class Tags extends ProjectsEndpoint
 
     protected function makeOne(int $id): Tag
     {
-        return new Tag($this, $id, ['id' => $id]);
+        return new Tag($this, $id);
     }
 }

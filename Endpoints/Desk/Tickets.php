@@ -17,6 +17,6 @@ class Tickets extends DeskEndpoint
 
     protected function makeOne(int $id): Ticket
     {
-        return new Ticket($this, $id, ['id' => $id]);
+        return new Ticket($this, $id);
     }
 }
