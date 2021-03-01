@@ -6,6 +6,8 @@ use DNAFactory\Teamwork\Endpoints\BaseEndpoint;
 
 abstract class DeskEndpoint extends BaseEndpoint
 {
+    const REF_NAMESPACE = 'desk';
+
     public function requestParams(array $request): array
     {
         [$skip, $limit, $params] = parent::requestParams($request);

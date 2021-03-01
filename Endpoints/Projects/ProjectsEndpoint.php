@@ -7,6 +7,8 @@ use DNAFactory\Teamwork\Models\BaseModel;
 
 abstract class ProjectsEndpoint extends BaseEndpoint
 {
+    const REF_NAMESPACE = 'projects';
+
     public function requestParams(array $request): array
     {
         [$skip, $limit, $params] = parent::requestParams($request);

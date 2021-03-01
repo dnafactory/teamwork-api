@@ -22,10 +22,12 @@ class Router
     public function registerEndpoint(BaseEndpoint $endpoint)
     {
         $type = $endpoint::REF_TYPE_NAME;
-        if (isset($this->endpoints[$type])) {
-            throw new EndpointAlreadyRegisteredException("endpoint of type '$type' already registered");
+        $namespace = $endpoint::REF_NAMESPACE;
+        if (isset($this->endpoints[$namespace][$type])) {
+            throw new EndpointAlreadyRegisteredException("endpoint '{$namespace}.{$type}' already registered");
         }
-        $this->endpoints[$type] = $endpoint;
+        $this->endpoints[$namespace] ??= [];
+        $this->endpoints[$namespace][$type] = $endpoint;
     }
 
     /**
@@ -33,10 +35,10 @@ class Router
      * @return BaseModel
      * @throws EndpointNotRegisteredException
      */
-    public function retriveReference(array $reference): BaseModel
+    public function retriveReference(array $reference, string $namespace): BaseModel
     {
         $type = $reference['type'] ?? null;
-        $endpoint = $this->getEndpointByType($type);
+        $endpoint = $this->getEndpoint($type, $namespace);
         return $endpoint->retriveReference($reference);
     }
 
@@ -45,10 +47,10 @@ class Router
      * @param array $entries
      * @throws EndpointNotRegisteredException
      */
-    public function loadEntries(string $type, array $entries)
+    public function loadEntries(array $entries, string $type, string $namespace)
     {
         /** @var BaseEndpoint $endpoint */
-        $endpoint = $this->getEndpointByType($type);
+        $endpoint = $this->getEndpoint($type, $namespace);
         $endpoint->loadRawEntries($entries);
     }
 
@@ -57,11 +59,11 @@ class Router
      * @return mixed
      * @throws EndpointNotRegisteredException
      */
-    public function getEndpointByType(string $type): ?BaseEndpoint
+    public function getEndpoint(string $type, string $namespace): ?BaseEndpoint
     {
-        $endpoint = $this->endpoints[$type] ?? null;
+        $endpoint = $this->endpoints[$namespace][$type] ?? null;
         if (!isset($endpoint)) {
-            throw new EndpointNotRegisteredException("endpoint for type '$type' not registered");
+            throw new EndpointNotRegisteredException("endpoint for '{$namespace}.{$type}' not registered");
         }
         return $endpoint;
     }

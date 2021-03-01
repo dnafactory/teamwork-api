@@ -35,7 +35,7 @@ class CustomFieldOptions extends DeskEndpoint
             return;
         }
         /** @var CustomFields $customfieldsApi */
-        $customFieldsApi = $this->router->getEndpointByType('customfields');
+        $customFieldsApi = $this->router->getEndpoint('customfields', static::REF_NAMESPACE);
         $customFieldsApi->makeRequest()->preload(['customfieldoptions'])->getArray();
         $this->preloaded = true;
     }

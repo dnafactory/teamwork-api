@@ -12,6 +12,7 @@ abstract class BaseEndpoint
 {
     // string that identifies the type when other endpoints reference an entry
     const REF_TYPE_NAME = null;
+    const REF_NAMESPACE = null;
 
     protected Router $router;
     protected BaseRawEndpoint $rawEndpoint;
@@ -29,7 +30,7 @@ abstract class BaseEndpoint
     {
         $this->rawEndpoint = $rawEndpoint;
         $this->router = $router;
-        $this->router->registerEndpoint($this);
+        //$this->router->registerEndpoint($this);
     }
 
     public function getBaseUrl()
@@ -89,8 +90,9 @@ abstract class BaseEndpoint
      * @throws InvalidReferenceException
      * @throws \DNAFactory\Teamwork\Exceptions\EndpointNotRegisteredException
      */
-    public function retriveReference(?array $reference): ?BaseModel
+    public function retriveReference(?array $reference, ?string $namespace = null): ?BaseModel
     {
+        $namespace ??= static::REF_NAMESPACE;
         $type = $reference['type'] ?? null;
         $id = $reference['id'] ?? null;
         if (is_null($type) || is_null($id)) {
@@ -99,7 +101,7 @@ abstract class BaseEndpoint
         if ($type == static::REF_TYPE_NAME) {
             return $this->getById($id);
         }
-        return $this->router->retriveReference($reference);
+        return $this->router->retriveReference($reference, $namespace);
     }
 
     public function getRawById(int $id)
@@ -154,7 +156,7 @@ abstract class BaseEndpoint
     {
         $included = $rawData['included'] ?? [];
         foreach ($included as $type => $entries) {
-            $this->router->loadEntries($type, $entries);
+            $this->router->loadEntries($entries, $type, static::REF_NAMESPACE);
         }
     }
 

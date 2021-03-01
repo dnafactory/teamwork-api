@@ -83,7 +83,7 @@ abstract class BaseModel
         return $definition->convert($rawValue);
     }
 
-    protected function retriveManyReferences(array $references)
+    protected function retriveManyReferences(array $references, ?string $namespace = null)
     {
         $data = [];
         foreach ($references as $reference) {
