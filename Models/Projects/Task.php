@@ -77,7 +77,8 @@ class Task extends BaseModel
     protected function getDueDate()
     {
         $rawDueDate = $this->getRawAttribute('due-date') ?: null;
-        return $this->convertDate($rawDueDate);
+        $dueDate = $this->convertDate($rawDueDate);
+        return !is_null($dueDate) ? $dueDate->endOfDay() : null;
     }
 
     protected function getResponsibleParties()
