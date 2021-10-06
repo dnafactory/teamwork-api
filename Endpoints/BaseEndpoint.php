@@ -154,8 +154,7 @@ abstract class BaseEndpoint
 
     protected function loadIncluded(array $rawData)
     {
-        $included = $rawData['included'] ?? [];
-        foreach ($included as $type => $entries) {
+        foreach ($rawData as $type => $entries) {
             $this->router->loadEntries($entries, $type, static::REF_NAMESPACE);
         }
     }

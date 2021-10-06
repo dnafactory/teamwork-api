@@ -74,12 +74,12 @@ class Ticket extends BaseModel
         return $this->endpoint->retriveReference($reference);
     }
 
+    */
     protected function getMessages(): array
     {
         $references = $this->getRawAttribute('messages', []);
         return $this->retriveManyReferences($references);
     }
-    */
 
     protected function getTimelogs(): array
     {
