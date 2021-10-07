@@ -65,9 +65,9 @@ abstract class BaseModel
         return $rawData[$name] ?? $default;
     }
 
-    public function extractRawCustomField(int $id, $default = null): ?array
+    public function extractRawCustomField(int $id, $default = null)
     {
-        $rawCustomfields = $this->getRawAttribute('customfields');
+        $rawCustomfields = $this->getRawAttribute('customfields', []);
         foreach ($rawCustomfields as $rawCustomfield) {
             if (!isset($rawCustomfield['meta']) || $rawCustomfield['id'] != $id) {
                 continue;
