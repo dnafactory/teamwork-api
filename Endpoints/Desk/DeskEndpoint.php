@@ -39,4 +39,15 @@ abstract class DeskEndpoint extends BaseEndpoint
             ->filterBy(['id' => ['$in' => $missing]])
             ->getArray();
     }
+
+    protected function nextPage(array $pagination, array $params): ?array
+    {
+        $hasMore = $pagination['hasMorePages'] ?? false;
+        if (!$hasMore) {
+            return null;
+        }
+        $page = $params['page'] ?? 1;
+        $params['page'] = $page + 1;
+        return $params;
+    }
 }
